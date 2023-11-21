@@ -30,10 +30,10 @@ model Task {
   isArchived                 Boolean      @default(false)
   authorId                   String
   projectId                  String
-  assigneeId                 String?
+  assigneeId                 String
   createdAt                  DateTime     @default(now())
   updatedAt                  DateTime     @updatedAt
-  User_Task_assigneeIdToUser User?        @relation("Task_assigneeIdToUser", fields: [assigneeId], references: [id])
+  User_Task_assigneeIdToUser User        @relation("Task_assigneeIdToUser", fields: [assigneeId], references: [id])
   User_Task_authorIdToUser   User         @relation("Task_authorIdToUser", fields: [authorId], references: [id])
   Project                    Project      @relation(fields: [projectId], references: [id])
 }
