@@ -21,7 +21,7 @@ model User {
   tasks         Task[]         @relation("TaskOwner")
   assignedTasks Task[]         @relation("TaskAssignee")
   projects      Project[]      @relation("ProjectOwner")
-  members       Member[]
+  members       ProjectMember[]
   notifications Notification[]
   Comment       Comment[]
 }
@@ -37,16 +37,16 @@ model Project {
   // relationships
   owner   User     @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   tasks   Task[]
-  members Member[]
+  members ProjectMember[]
 
   @@index([ownerId])
 }
 
-model Member {
+model ProjectMember {
   id        String     @id @default(uuid())
   userId    String
   projectId String
-  role      MemberRole @default(MEMBER)
+  role      ProjectMemberRole @default(VIEWER)
   createdAt DateTime   @default(now())
 
   // relationships
@@ -58,10 +58,10 @@ model Member {
   @@index([userId])
 }
 
-enum MemberRole {
+enum ProjectMemberRole {
   OWNER
   ADMIN
-  MEMBER
+  VIEWER
 }
 
 model Task {
