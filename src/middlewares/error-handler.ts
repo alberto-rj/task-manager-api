@@ -11,7 +11,7 @@ export function errorHandler(
   if (error instanceof AppError) {
     return res
       .status(error.statusCode)
-      .json({ status: 'error', message: error.message });
+      .json({ success: false, message: error.message });
   }
 
   logger.error(`[Internal Error] ${error.message}`, {
@@ -22,5 +22,5 @@ export function errorHandler(
 
   return res
     .status(500)
-    .json({ status: 'error', message: 'Internal sever error' });
+    .json({ success: false, message: 'Internal sever error' });
 }
