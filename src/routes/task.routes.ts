@@ -58,38 +58,4 @@ taskRoutes.patch('/:id/assign', (req, res) => {
   });
 });
 
-// task tags
-taskRoutes.post('/:id/tags/:tagId', (req, res) => {
-  res.status(201).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Create tag`,
-  });
-});
-
-taskRoutes.delete('/:id/tags/:tagId', (req, res) => {
-  res.status(200).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Delete tag`,
-  });
-});
-
-// task comments
-taskRoutes.post('/:id/comments', (req, res) => {
-  res.status(201).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Add comment`,
-  });
-});
-
-taskRoutes.get('/:id/comments', (req, res) => {
-  res.status(200).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Get comments`,
-  });
-});
-
 export { taskRoutes };
