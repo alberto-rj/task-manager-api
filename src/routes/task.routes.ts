@@ -42,20 +42,4 @@ taskRoutes.delete('/:id', (req, res) => {
   });
 });
 
-taskRoutes.patch('/:id/status', (req, res) => {
-  res.status(200).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Update task status`,
-  });
-});
-
-taskRoutes.patch('/:id/assign', (req, res) => {
-  res.status(200).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Assign task to user`,
-  });
-});
-
 export { taskRoutes };
