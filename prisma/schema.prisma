@@ -1,15 +1,68 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  isArchived  Boolean  @default(false)
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User     @relation(fields: [authorId], references: [id])
+  Task        Task[]
+}
+
+model Task {
+  id                         String       @id @default(uuid())
+  title                      String
+  description                String?
+  status                     TaskStatus   @default(PENDING)
+  priority                   TaskPriority @default(MEDIUM)
+  dueDate                    DateTime?
+  isArchived                 Boolean      @default(false)
+  authorId                   String
+  projectId                  String
+  assigneeId                 String?
+  createdAt                  DateTime     @default(now())
+  updatedAt                  DateTime @updatedAt
+  User_Task_assigneeIdToUser User?        @relation("Task_assigneeIdToUser", fields: [assigneeId], references: [id])
+  User_Task_authorIdToUser   User         @relation("Task_authorIdToUser", fields: [authorId], references: [id])
+  Project                    Project      @relation(fields: [projectId], references: [id])
+}
+
+model User {
+  id                         String    @id @default(uuid())
+  firstName                  String
+  lastName                   String
+  email                      String    @unique
+  password                   String
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime @updatedAt
+  username                   String    @unique
+  Project                    Project[]
+  Task_Task_assigneeIdToUser Task[]    @relation("Task_assigneeIdToUser")
+  Task_Task_authorIdToUser   Task[]    @relation("Task_authorIdToUser")
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  CANCELLED
 }
