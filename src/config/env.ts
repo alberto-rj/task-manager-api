@@ -10,6 +10,9 @@ export const env = {
   isTest: () => process.env.NODE_ENV === 'test',
 
   // JWT
-  jwtSecret: process.env.JWT_SECRET || 'your_jwt_secret',
-  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1d',
+  jwtSecret: process.env.JWT_SECRET || 'secret',
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1h',
+
+  // password
+  saltRounds: parseInt(process.env.SALT_ROUNDS || '10'),
 };

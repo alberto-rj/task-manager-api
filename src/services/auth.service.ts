@@ -4,17 +4,23 @@ import {
   SignupOutput,
   SigninInput,
   SigninOutput,
+  toIUserPayload,
 } from '../dtos/auth.dto';
 import { IAuthService } from './i-auth.service';
-import { NotFoundError } from '../utils/app-error';
-import { verifyPassword } from '../utils/password-hash';
 import { IUserService } from './i-user.service';
+import { NotFoundError } from '../utils/app-error';
+import { verifyPassword } from '../utils/password-security';
+import { generateAccessToken } from '../utils/jwt';
+import { toUserOutput } from '../dtos/user.dto';
 
 export class AuthService implements IAuthService {
-  constructor(
-    private repo: IUserRepository,
-    private service: IUserService,
-  ) {}
+  private repo: IUserRepository;
+  private service: IUserService;
+
+  constructor(repo: IUserRepository, service: IUserService) {
+    this.repo = repo;
+    this.service = service;
+  }
 
   async signin(data: SigninInput): Promise<SigninOutput> {
     const filteredUser = await this.repo.findByIdentifier(data.identifier);
@@ -34,11 +40,23 @@ export class AuthService implements IAuthService {
       throw error;
     }
 
-    return filteredUser;
+    const userOutput = toUserOutput(filteredUser);
+    const accessToken = generateAccessToken(toIUserPayload(filteredUser));
+
+    return {
+      user: userOutput,
+      accessToken,
+    };
   }
 
   async signup(data: SignupInput): Promise<SignupOutput> {
-    const response = await this.service.create(data);
-    return {};
+    const createdUser = await this.service.create(data);
+
+    const accessToken = generateAccessToken(toIUserPayload(createdUser));
+
+    return {
+      user: createdUser,
+      accessToken,
+    };
   }
 }

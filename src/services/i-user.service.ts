@@ -9,6 +9,8 @@ export interface IUserService {
 
   getByUsername(username: string): Promise<UserOutput>;
 
+  getByIdentifier(username: string): Promise<UserOutput>;
+
   getAllByEmailOrUsername(
     email: string,
     username: string,

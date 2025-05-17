@@ -1,21 +1,44 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
-import { IUserService } from '@/services/i-user.service';
-import { loginUserSchema } from '@/dtos/user.dto';
-import { AppError } from '@/utils/app-error';
+import { toSigninInput, toSignupInput } from '../dtos/auth.dto';
+import { IAuthService } from '../services/i-auth.service';
+import { auth } from '../utils/response-body';
 
-export class AuthController {
-  constructor(private service: IUserService) {}
+export const newAuthController = (service: IAuthService) => {
+  const signin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const input = toSigninInput(req.body);
+      const output = await service.signin(input);
 
-  async login(req: Request, res: Response) {
-    const result = loginUserSchema.safeParse(req.body);
-
-    if (!result.success) {
-      throw new AppError('Invalid fields', 400);
+      res.status(200).json(
+        auth<typeof output.user>({
+          accessToken: output.accessToken,
+          user: output.user,
+        }),
+      );
+    } catch (error) {
+      next(error);
     }
+  };
 
-    this.service.getByIdentifier(result.data.identifier);
-  }
+  const signup = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const input = toSignupInput(req.body);
+      const output = await service.signup(input);
 
-  async register(req: Request, res: Response) {}
-}
+      res.status(201).json(
+        auth<typeof output.user>({
+          accessToken: output.accessToken,
+          user: output.user,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  return {
+    signin,
+    signup,
+  };
+};

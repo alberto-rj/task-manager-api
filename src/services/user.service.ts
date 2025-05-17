@@ -1,4 +1,3 @@
-import { IUserRepository } from '../repositories/i-user.repository';
 import {
   CreateUserInput,
   toUserOutput,
@@ -6,7 +5,13 @@ import {
   UserOutput,
 } from '../dtos/user.dto';
 import { IUserService } from './i-user.service';
-import { AppError } from '../utils/app-error';
+import { IUserRepository } from '../repositories/i-user.repository';
+import {
+  ConflictError,
+  ConflictErrorDetails,
+  NotFoundError,
+} from '../utils/app-error';
+import { hashPassword } from '../utils/password-security';
 
 export class UserService implements IUserService {
   constructor(private repo: IUserRepository) {}
@@ -20,7 +25,7 @@ export class UserService implements IUserService {
     const filteredUser = await this.repo.findById(id);
 
     if (!filteredUser) {
-      throw new AppError('User not found', 404);
+      throw new NotFoundError('User not found');
     }
 
     return toUserOutput(filteredUser);
@@ -30,7 +35,7 @@ export class UserService implements IUserService {
     const filteredUser = await this.repo.findByEmail(email);
 
     if (!filteredUser) {
-      throw new AppError('User not found', 404);
+      throw new NotFoundError('User not found');
     }
 
     return toUserOutput(filteredUser);
@@ -40,7 +45,17 @@ export class UserService implements IUserService {
     const filteredUser = await this.repo.findByUsername(username);
 
     if (!filteredUser) {
-      throw new AppError('User not found', 404);
+      throw new NotFoundError('User not found');
+    }
+
+    return toUserOutput(filteredUser);
+  }
+
+  async getByIdentifier(identifier: string): Promise<UserOutput> {
+    const filteredUser = await this.repo.findByIdentifier(identifier);
+
+    if (!filteredUser) {
+      throw new NotFoundError('User not found');
     }
 
     return toUserOutput(filteredUser);
@@ -73,27 +88,47 @@ export class UserService implements IUserService {
     );
 
     if (emailAlreadyExists || usernameAlreadyExists) {
-      const errors: Record<string, string> = {};
+      const details: ConflictErrorDetails[] = [];
 
       if (emailAlreadyExists) {
-        errors.email = `Email already exists`;
+        details.push({
+          field: `email`,
+          message: `Email is already registered`,
+        });
       }
 
       if (usernameAlreadyExists) {
-        errors.username = `Username already exists`;
+        details.push({
+          field: `username`,
+          message: `Username is already registered`,
+        });
       }
 
-      throw { status: 409, errors };
+      throw new ConflictError(details);
     }
 
-    const createdUser = await this.repo.create(data);
+    const hashedPassword = await hashPassword(data.password);
+
+    const createdUser = await this.repo.create({
+      ...data,
+      password: hashedPassword,
+    });
+
     return toUserOutput(createdUser);
   }
 
   async updateById(id: string, data: UpdateUserInput): Promise<UserOutput> {
     await this.getById(id);
 
-    const updatedUser = await this.repo.update(id, data);
+    const updatedPassword =
+      typeof data.password === 'string'
+        ? await hashPassword(data.password)
+        : data.password;
+
+    const updatedUser = await this.repo.update(id, {
+      ...data,
+      password: updatedPassword,
+    });
 
     return toUserOutput(updatedUser);
   }

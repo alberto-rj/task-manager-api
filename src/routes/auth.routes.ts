@@ -1,29 +1,27 @@
 import { Router } from 'express';
 
+import { newAuthController } from '../controllers/auth.controller';
+import { RepositoryFactory } from '../utils/repository-factory';
+import { ServiceFactory } from '../utils/service-factory';
+import { newAuthMiddleware } from '../middlewares/auth.middleware';
+
+const repo = RepositoryFactory.newIUserRepository();
+const userService = ServiceFactory.newIUserService(repo);
+const authService = ServiceFactory.newIAuthService(repo, userService);
+const authMiddleware = newAuthMiddleware(userService);
+const authController = newAuthController(authService);
 const authRoutes = Router();
 
-authRoutes.post('/register', (re, res) => {
-  res.status(201).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Registered`,
-  });
-});
+authRoutes.post(
+  '/signup',
+  authMiddleware.validateSignup,
+  authController.signup,
+);
 
-authRoutes.post('/login', (re, res) => {
-  res.status(201).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Logged`,
-  });
-});
-
-authRoutes.post('/refresh', (re, res) => {
-  res.status(200).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Token Refreshed`,
-  });
-});
+authRoutes.post(
+  '/signin',
+  authMiddleware.validateSignin,
+  authController.signin,
+);
 
 export { authRoutes };

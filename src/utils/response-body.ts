@@ -68,26 +68,20 @@ export function records<T>({ resources }: RecordsInput<T>): RecordsOutput<T> {
 
 export type AuthInput<T> = {
   accessToken: string;
-  refreshToken: string;
   user: T;
 };
 
 export type AuthOutput<T> = {
   success: boolean;
   accessToken: string;
-  refreshToken: string;
   user: T;
 };
 
-export function auth<T>({
-  accessToken,
-  refreshToken,
-  user,
-}: AuthInput<T>): AuthOutput<T> {
+export function auth<T>({ accessToken, user }: AuthInput<T>): AuthOutput<T> {
   return {
     success: true,
     accessToken,
-    refreshToken,
+
     user,
   };
 }

@@ -4,31 +4,26 @@ const id = z.string();
 
 const firstName = z
   .string()
-  .trim()
   .min(3, 'First name must have at least 3 characters')
   .max(30, 'First name must have until 30 characters');
 
 const lastName = z
   .string()
-  .trim()
   .min(3, 'Last name must have at least 3 characters')
   .max(30, 'Last name must have until 30 characters');
 
 const username = z
   .string()
-  .trim()
   .min(3, 'Username must have at least 3 characters')
   .max(20, 'Username must have until 20 characters');
 
 const email = z
   .string()
-  .trim()
   .max(60, 'Email must have until 60 characters')
   .email('Email must be a valid email');
 
 const password = z
   .string()
-  .trim()
   .min(6, 'Password must have at least 6 characters')
   .max(20, 'Password must have until 20 characters');
 

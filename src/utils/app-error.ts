@@ -11,7 +11,6 @@ export abstract class AppError<
     super(message);
     this.statusCode = statusCode;
     Error.captureStackTrace(this, this.constructor);
-    Object.setPrototypeOf(this, AppError.prototype);
   }
 
   format(): IAppErrorFormat {
@@ -43,12 +42,6 @@ export class NotFoundError extends AppError {
   }
 }
 
-export class ConflictError extends AppError {
-  constructor(message: string) {
-    super(message, 409);
-  }
-}
-
 export class UnprocessableEntityError extends AppError {
   constructor(message: string) {
     super(message, 422);
@@ -76,6 +69,31 @@ export class ValidationError extends AppError<IValidationErrorFormat> {
   }
 
   format(): IValidationErrorFormat {
+    return { message: this.message, details: this.details };
+  }
+}
+
+export type ConflictErrorDetails = {
+  field: string;
+  message: string;
+};
+
+export interface IConflictErrorFormat extends IAppErrorFormat {
+  details: ConflictErrorDetails[];
+}
+
+export class ConflictError extends AppError<IConflictErrorFormat> {
+  private details: ConflictErrorDetails[];
+
+  constructor(
+    details: ConflictErrorDetails[],
+    message: string = 'Conflict error',
+  ) {
+    super(message, 409);
+    this.details = details;
+  }
+
+  format(): IConflictErrorFormat {
     return { message: this.message, details: this.details };
   }
 }

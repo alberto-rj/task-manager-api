@@ -1,21 +1,28 @@
+import { Request } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
 import { z } from 'zod';
 
 import {
+  User,
   email,
   firstName,
   lastName,
   password,
   username,
 } from '../models/user.model';
+import { UserOutput } from './user.dto';
 
 export const signinInputSchema = z.object({
-  identifier: z.string().trim().min(2, 'Identifier cant not be empty'),
+  identifier: z.string().min(1, 'Identifier can not be empty'),
   password,
 });
 
 export type SigninInput = z.infer<typeof signinInputSchema>;
 
-export type SigninOutput = {};
+export type SigninOutput = {
+  user: UserOutput;
+  accessToken: string;
+};
 
 export const signupInputSchema = z.object({
   firstName,
@@ -27,4 +34,29 @@ export const signupInputSchema = z.object({
 
 export type SignupInput = z.infer<typeof signupInputSchema>;
 
-export type SignupOutput = {};
+export type SignupOutput = {
+  user: UserOutput;
+  accessToken: string;
+};
+
+export interface IUserPayload extends JwtPayload {
+  id: string;
+}
+
+export interface IAuthRequest extends Request {
+  user?: UserOutput;
+}
+
+export const toIUserPayload = ({
+  id,
+}: User | UserOutput | { id: string }): IUserPayload => {
+  return { id };
+};
+
+export const toSigninInput = (data: unknown): SigninInput => {
+  return signinInputSchema.parse(data);
+};
+
+export const toSignupInput = (data: unknown): SignupInput => {
+  return signupInputSchema.parse(data);
+};
