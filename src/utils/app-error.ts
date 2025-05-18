@@ -1,4 +1,5 @@
 export interface IAppErrorFormat {
+  success: boolean;
   message: string;
 }
 
@@ -14,7 +15,7 @@ export abstract class AppError<
   }
 
   format(): IAppErrorFormat {
-    return { message: this.message };
+    return { success: false, message: this.message };
   }
 }
 
@@ -69,7 +70,7 @@ export class ValidationError extends AppError<IValidationErrorFormat> {
   }
 
   format(): IValidationErrorFormat {
-    return { message: this.message, details: this.details };
+    return { ...super.format(), details: this.details };
   }
 }
 
@@ -94,6 +95,6 @@ export class ConflictError extends AppError<IConflictErrorFormat> {
   }
 
   format(): IConflictErrorFormat {
-    return { message: this.message, details: this.details };
+    return { ...super.format(), details: this.details };
   }
 }

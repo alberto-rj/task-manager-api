@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import { env } from '../config/env';
 import { IUserPayload } from '../dtos/auth.dto';
+import crypto from 'crypto';
 
 export function generateAccessToken(payload: IUserPayload) {
   return jwt.sign(payload, env.jwtSecret, { expiresIn: env.jwtExpiresIn });
@@ -14,4 +15,8 @@ export function verifyToken(token: string): IUserPayload | null {
   } catch (error) {
     return null;
   }
+}
+
+export function generateRefreshToken(): string {
+  return crypto.randomBytes(40).toString('hex');
 }

@@ -1,29 +1,33 @@
-import { CreateUserInput, UpdateUserInput } from '../dtos/user.dto';
+import { PrismaClient, User } from 'generated/prisma';
 
+import { CreateUserInput, UpdateUserInput } from '../dtos/user.dto';
 import { IUserRepository } from './i-user.repository';
 
-import { User } from '../models/user.model';
-import prisma from '../config/prisma';
-
 export class PrismaUserRepository implements IUserRepository {
+  private prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
+
   async findAll(): Promise<User[]> {
-    return prisma.user.findMany();
+    return this.prisma.user.findMany();
   }
 
   async findById(id: string): Promise<User | null> {
-    return prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({ where: { id } });
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return prisma.user.findUnique({ where: { email } });
+    return this.prisma.user.findUnique({ where: { email } });
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return prisma.user.findUnique({ where: { username } });
+    return this.prisma.user.findUnique({ where: { username } });
   }
 
   async findByIdentifier(identifier: string): Promise<User | null> {
-    return prisma.user.findFirst({
+    return this.prisma.user.findFirst({
       where: {
         OR: [{ email: identifier }, { username: identifier }],
       },
@@ -34,7 +38,7 @@ export class PrismaUserRepository implements IUserRepository {
     email: string,
     username: string,
   ): Promise<User[]> {
-    return prisma.user.findMany({
+    return this.prisma.user.findMany({
       where: {
         OR: [{ email }, { username }],
       },
@@ -42,14 +46,14 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   async create(data: CreateUserInput): Promise<User> {
-    return prisma.user.create({ data });
+    return this.prisma.user.create({ data });
   }
 
   async update(id: string, data: UpdateUserInput): Promise<User> {
-    return prisma.user.update({ where: { id }, data });
+    return this.prisma.user.update({ where: { id }, data });
   }
 
   async delete(id: string): Promise<void> {
-    prisma.user.delete({ where: { id } });
+    this.prisma.user.delete({ where: { id } });
   }
 }

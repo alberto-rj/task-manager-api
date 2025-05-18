@@ -1,3 +1,4 @@
+import { IRefreshTokenRepository } from '../repositories/i-refresh-token.repository';
 import { IUserRepository } from '../repositories/i-user.repository';
 import { AuthService } from '../services/auth.service';
 import { IAuthService } from '../services/i-auth.service';
@@ -12,9 +13,10 @@ export class ServiceFactory {
   }
 
   static newIAuthService(
+    refreshTokenRepo: IRefreshTokenRepository,
     repo: IUserRepository,
     service: IUserService,
   ): IAuthService {
-    return new AuthService(repo, service);
+    return new AuthService(refreshTokenRepo, repo, service);
   }
 }

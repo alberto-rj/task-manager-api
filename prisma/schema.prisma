@@ -50,6 +50,8 @@ model User {
   Project                    Project[]
   Task_Task_assigneeIdToUser Task[]    @relation("Task_assigneeIdToUser")
   Task_Task_authorIdToUser   Task[]    @relation("Task_authorIdToUser")
+
+  refreshTokens RefreshToken[]
 }
 
 enum TaskPriority {
@@ -65,4 +67,15 @@ enum TaskStatus {
   REVIEW
   COMPLETED
   CANCELLED
+}
+
+model RefreshToken {
+  id String @id @default(uuid())
+  token String @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  userId String
+
+  // relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -6,7 +6,7 @@ import {
   signupInputSchema,
 } from '../dtos/auth.dto';
 import { IUserService } from '../services/i-user.service';
-import { UnauthorizedError } from '../utils/app-error';
+import { ForbiddenError, UnauthorizedError } from '../utils/app-error';
 import { verifyToken } from '../utils/jwt';
 import { validateBody } from './validation.middleware';
 
@@ -45,8 +45,33 @@ export const newAuthMiddleware = (service: IUserService) => {
     }
   };
 
+  const authorize = (roles: string[] = []) => {
+    return (req: IAuthRequest, res: Response, next: NextFunction) => {
+      try {
+        if (!req.user) {
+          throw new UnauthorizedError('Not authenticated');
+        }
+
+        if (roles.length === 0) {
+          next();
+          return;
+        }
+
+        // if (req.user.role && roles.includes(req.user.role)) {
+        //   next();
+        //   return;
+        // }
+
+        throw new ForbiddenError('Insufficient permissions');
+      } catch (error) {
+        next(error);
+      }
+    };
+  };
+
   return {
     authenticate,
+    authorize,
     validateSignin,
     validateSignup,
   };

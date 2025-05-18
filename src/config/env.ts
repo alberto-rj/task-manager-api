@@ -13,6 +13,11 @@ export const env = {
   jwtSecret: process.env.JWT_SECRET || 'secret',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '1h',
 
+  // refresh token
+  refreshTokenExpiresInDays: parseInt(
+    process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS || '30',
+  ),
+
   // password
   saltRounds: parseInt(process.env.SALT_ROUNDS || '10'),
 };
