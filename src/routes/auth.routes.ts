@@ -5,9 +5,14 @@ import { RepositoryFactory } from '../utils/repository-factory';
 import { ServiceFactory } from '../utils/service-factory';
 import { newAuthMiddleware } from '../middlewares/auth.middleware';
 
-const repo = RepositoryFactory.newIUserRepository();
-const userService = ServiceFactory.newIUserService(repo);
-const authService = ServiceFactory.newIAuthService(repo, userService);
+const refreshTokenRepo = RepositoryFactory.newIRefreshTokenRepository();
+const userRepo = RepositoryFactory.newIUserRepository();
+const userService = ServiceFactory.newIUserService(userRepo);
+const authService = ServiceFactory.newIAuthService(
+  refreshTokenRepo,
+  userRepo,
+  userService,
+);
 const authMiddleware = newAuthMiddleware(userService);
 const authController = newAuthController(authService);
 const authRoutes = Router();
