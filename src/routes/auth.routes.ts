@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { newAuthController } from '../controllers/auth.controller';
 import { RepositoryFactory } from '../utils/repository-factory';
 import { ServiceFactory } from '../utils/service-factory';
-import { newAuthMiddleware } from '../middlewares/auth.middleware';
+// import { newAuthMiddleware } from '../middlewares/auth.middleware';
 
 const refreshTokenRepo = RepositoryFactory.newIRefreshTokenRepository();
 const userRepo = RepositoryFactory.newIUserRepository();
@@ -13,20 +13,16 @@ const authService = ServiceFactory.newIAuthService(
   userRepo,
   userService,
 );
-const authMiddleware = newAuthMiddleware(userService);
+// const authMiddleware = newAuthMiddleware(userService);
 const authController = newAuthController(authService);
 const authRoutes = Router();
 
-authRoutes.post(
-  '/signup',
-  authMiddleware.validateSignup,
-  authController.signup,
-);
+authRoutes.post('/signup', authController.signup);
 
-authRoutes.post(
-  '/signin',
-  authMiddleware.validateSignin,
-  authController.signin,
-);
+authRoutes.post('/signin', authController.signin);
+
+authRoutes.post('/refresh-token', authController.refreshToken);
+
+authRoutes.post('/logout', authController.logout);
 
 export { authRoutes };

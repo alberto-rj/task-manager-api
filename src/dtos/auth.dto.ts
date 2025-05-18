@@ -11,6 +11,7 @@ import {
   username,
   UserOutput,
 } from './user.dto';
+import { validate } from '../utils/validate';
 
 export const signinInputSchema = z.object({
   identifier: z.string().min(1, 'Identifier can not be empty'),
@@ -25,6 +26,10 @@ export type SigninOutput = {
   refreshToken: string;
 };
 
+export const toSigninInput = (data: unknown): SigninInput => {
+  return <SigninInput>validate(signinInputSchema, data);
+};
+
 export const signupInputSchema = z.object({
   firstName,
   lastName,
@@ -35,14 +40,24 @@ export const signupInputSchema = z.object({
 
 export type SignupInput = z.infer<typeof signupInputSchema>;
 
+export const toSignupInput = (data: unknown): SignupInput => {
+  return <SignupInput>validate(signupInputSchema, data);
+};
+
 export type SignupOutput = {
   user: UserOutput;
   accessToken: string;
   refreshToken: string;
 };
 
-export type RefreshTokenInput = {
-  refreshToken: string;
+export const refreshTokenInputSchema = z.object({
+  refreshToken: z.string().min(1, 'Refresh token can not be empty'),
+});
+
+export type RefreshTokenInput = z.infer<typeof refreshTokenInputSchema>;
+
+export const toRefreshTokenInput = (data: unknown): RefreshTokenInput => {
+  return <RefreshTokenInput>validate(refreshTokenInputSchema, data);
 };
 
 export type RefreshTokenOutput = {
@@ -63,12 +78,4 @@ export const toIUserPayload = ({
   id,
 }: User | UserOutput | { id: string }): IUserPayload => {
   return { id };
-};
-
-export const toSigninInput = (data: unknown): SigninInput => {
-  return signinInputSchema.parse(data);
-};
-
-export const toSignupInput = (data: unknown): SignupInput => {
-  return signupInputSchema.parse(data);
 };

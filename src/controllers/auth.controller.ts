@@ -1,10 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { env } from '../config/env';
-import { toSigninInput, toSignupInput } from '../dtos/auth.dto';
+import {
+  toRefreshTokenInput,
+  toSigninInput,
+  toSignupInput,
+} from '../dtos/auth.dto';
 import { IAuthService } from '../services/i-auth.service';
 import { auth } from '../utils/response-body';
-import { UnauthorizedError } from '../utils/app-error';
 
 export const newAuthController = (service: IAuthService) => {
   const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
@@ -18,12 +21,8 @@ export const newAuthController = (service: IAuthService) => {
 
   const logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const refreshToken = req.cookies.refreshToken;
-
-      if (typeof refreshToken === 'string') {
-        await service.logout({ refreshToken });
-      }
-
+      const input = toRefreshTokenInput(req.cookies);
+      await service.logout(input);
       res.clearCookie('refreshToken');
       res.status(204).send();
     } catch (error) {
@@ -37,13 +36,9 @@ export const newAuthController = (service: IAuthService) => {
     next: NextFunction,
   ) => {
     try {
-      const refreshToken = req.cookies.refreshToken;
+      const input = toRefreshTokenInput(req.cookies);
 
-      if (typeof refreshToken !== 'string') {
-        throw new UnauthorizedError('Refresh token not provided');
-      }
-
-      const output = await service.refreshToken({ refreshToken });
+      const output = await service.refreshToken(input);
 
       setRefreshTokenCookie(res, output.refreshToken);
 

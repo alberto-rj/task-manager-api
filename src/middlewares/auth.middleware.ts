@@ -1,20 +1,11 @@
 import { NextFunction, Response } from 'express';
 
-import {
-  IAuthRequest,
-  signinInputSchema,
-  signupInputSchema,
-} from '../dtos/auth.dto';
+import { IAuthRequest } from '../dtos/auth.dto';
 import { IUserService } from '../services/i-user.service';
 import { ForbiddenError, UnauthorizedError } from '../utils/app-error';
 import { verifyToken } from '../utils/jwt';
-import { validateBody } from './validation.middleware';
 
 export const newAuthMiddleware = (service: IUserService) => {
-  const validateSignin = validateBody(signinInputSchema);
-
-  const validateSignup = validateBody(signupInputSchema);
-
   const authenticate = async (
     req: IAuthRequest,
     res: Response,
@@ -72,7 +63,5 @@ export const newAuthMiddleware = (service: IUserService) => {
   return {
     authenticate,
     authorize,
-    validateSignin,
-    validateSignup,
   };
 };
