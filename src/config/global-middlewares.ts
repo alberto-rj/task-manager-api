@@ -5,10 +5,12 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 import { env } from './env';
+import cookieParser from 'cookie-parser';
 
 export const setupGlobalMiddlewares = (app: Express) => {
   app.use(helmet());
   app.use(express.json());
+  app.use(cookieParser());
   app.use(cors());
   app.use(compression());
 
