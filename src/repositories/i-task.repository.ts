@@ -1,3 +1,1 @@
-export interface ITaskRepository {
-
-}
+export interface ITaskRepository {}
