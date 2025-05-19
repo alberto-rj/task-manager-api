@@ -32,7 +32,7 @@ model Task {
   projectId                  String
   assigneeId                 String?
   createdAt                  DateTime     @default(now())
-  updatedAt                  DateTime @updatedAt
+  updatedAt                  DateTime     @updatedAt
   User_Task_assigneeIdToUser User?        @relation("Task_assigneeIdToUser", fields: [assigneeId], references: [id])
   User_Task_authorIdToUser   User         @relation("Task_authorIdToUser", fields: [authorId], references: [id])
   Project                    Project      @relation(fields: [projectId], references: [id])
@@ -45,7 +45,7 @@ model User {
   email                      String    @unique
   password                   String
   createdAt                  DateTime  @default(now())
-  updatedAt                  DateTime @updatedAt
+  updatedAt                  DateTime  @updatedAt
   username                   String    @unique
   Project                    Project[]
   Task_Task_assigneeIdToUser Task[]    @relation("Task_assigneeIdToUser")
@@ -70,11 +70,11 @@ enum TaskStatus {
 }
 
 model RefreshToken {
-  id String @id @default(uuid())
-  token String @unique
+  id        String   @id @default(uuid())
+  token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
-  userId String
+  userId    String
 
   // relationships
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
