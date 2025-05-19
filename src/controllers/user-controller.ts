@@ -1,9 +1,9 @@
 import { Response } from 'express';
 
-import { IUserService } from '../services/i-user.service';
+import { IUserService } from '../services/i-user-service';
 import { AuthRequest } from './i-auth-request';
-import { updateUserInputSchema } from '@/dtos/user.dto';
-import { AppError } from '@/utils/app-error';
+import { updateUserInputSchema } from '../dtos/user.dto';
+import { AppError } from '../utils/app-error';
 
 export class UserController {
   constructor(private service: IUserService) {}

@@ -1,4 +1,4 @@
-import { IUserRepository } from '../repositories/i-user.repository';
+import { IUserRepository } from '../repositories/i-user-repository';
 import {
   SignupInput,
   SignupOutput,
@@ -8,13 +8,13 @@ import {
   RefreshTokenInput,
   RefreshTokenOutput,
 } from '../dtos/auth.dto';
-import { IAuthService } from './i-auth.service';
-import { IUserService } from './i-user.service';
+import { IAuthService } from './i-auth-service';
+import { IUserService } from './i-user-service';
 import { NotFoundError, UnauthorizedError } from '../utils/app-error';
 import { verifyPassword } from '../utils/password-security';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 import { toUserOutput } from '../dtos/user.dto';
-import { IRefreshTokenRepository } from '../repositories/i-refresh-token.repository';
+import { IRefreshTokenRepository } from '../repositories/i-refresh-token-repository';
 import { env } from '../config/env';
 
 export class AuthService implements IAuthService {

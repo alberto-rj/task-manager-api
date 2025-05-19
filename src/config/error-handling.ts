@@ -1,6 +1,6 @@
 import { Request, Response, Express, NextFunction } from 'express';
 
-import { errorHandler } from '../middlewares/error-handler.middleware';
+import { errorHandler } from '../middlewares/error-handler-middleware';
 import { NotFoundError } from '../utils/app-error';
 
 export const setupErrorHandling = (app: Express) => {

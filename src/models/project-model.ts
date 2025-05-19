@@ -1,0 +1,14 @@
+export { Project } from 'generated/prisma';
+
+export type ProjectCreateInput = {
+  name: string;
+  description?: string;
+  authorId: string;
+};
+
+export type ProjectUpdateInput = {
+  name?: string;
+  description?: string;
+  isArchived?: boolean;
+  authorId?: string;
+};

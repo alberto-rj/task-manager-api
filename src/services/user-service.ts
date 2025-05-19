@@ -4,8 +4,8 @@ import {
   UpdateUserInput,
   UserOutput,
 } from '../dtos/user.dto';
-import { IUserService } from './i-user.service';
-import { IUserRepository } from '../repositories/i-user.repository';
+import { IUserService } from './i-user-service';
+import { IUserRepository } from '../repositories/i-user-repository';
 import {
   ConflictError,
   ConflictErrorDetails,

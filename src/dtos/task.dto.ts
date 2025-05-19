@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
-import { Task, TaskPriority, TaskStatus } from '../models/task.model';
+import { Task, TaskPriority, TaskStatus } from '../models/task-model';
 import { compareDates } from '../utils/comparator';
 import { validate } from '../utils/validate';
 
 export const id = z
   .string({ message: 'Must be string' })
   .min(1, { message: 'Can not be empty' })
-  .uuid({ message: 'ID Must be in UUID format' });
+  .uuid({ message: 'ID Must be in the UUID format' });
 
 export const title = z
   .string({ message: 'Must be string' })

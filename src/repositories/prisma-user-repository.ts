@@ -1,7 +1,7 @@
 import { PrismaClient, User } from 'generated/prisma';
 
 import { CreateUserInput, UpdateUserInput } from '../dtos/user.dto';
-import { IUserRepository } from './i-user.repository';
+import { IUserRepository } from './i-user-repository';
 
 export class PrismaUserRepository implements IUserRepository {
   private prisma: PrismaClient;

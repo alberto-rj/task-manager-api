@@ -1,22 +1,15 @@
-import { IRefreshTokenRepository } from '../repositories/i-refresh-token.repository';
-import { IUserRepository } from '../repositories/i-user.repository';
-import { AuthService } from '../services/auth.service';
-import { IAuthService } from '../services/i-auth.service';
-import { IUserService } from '../services/i-user.service';
-import { UserService } from '../services/user.service';
+import { IServiceFactory } from '../services/i-service-factory';
+import { ServiceFactory as ServiceFactoryImpl } from '../services/service-factory';
 
 export class ServiceFactory {
   private constructor() {}
 
-  static newIUserService(repo: IUserRepository): IUserService {
-    return new UserService(repo);
-  }
-
-  static newIAuthService(
-    refreshTokenRepo: IRefreshTokenRepository,
-    repo: IUserRepository,
-    service: IUserService,
-  ): IAuthService {
-    return new AuthService(refreshTokenRepo, repo, service);
+  static newInstance(): IServiceFactory {
+    return new ServiceFactoryImpl();
   }
 }
+
+export const serviceFactory = ServiceFactory.newInstance();
+export const newIAuthService = serviceFactory.newIAuthService;
+export const newIProjectService = serviceFactory.newIProjectService;
+export const newIUserService = serviceFactory.newIUserService;

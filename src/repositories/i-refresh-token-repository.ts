@@ -1,4 +1,4 @@
-import { RefreshToken } from '../models/refresh-token.model';
+import { RefreshToken } from '../models/refresh-token-model';
 
 export interface IRefreshTokenRepository {
   create(data: {

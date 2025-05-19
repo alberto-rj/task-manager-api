@@ -1,11 +1,9 @@
 import { NextFunction, Response } from 'express';
-
 import { IAuthRequest } from '../dtos/auth.dto';
-import { IUserService } from '../services/i-user.service';
 import { ForbiddenError, UnauthorizedError } from '../utils/app-error';
 import { verifyToken } from '../utils/jwt';
 
-export const newAuthMiddleware = (service: IUserService) => {
+export const newAuthMiddleware = () => {
   const authenticate = async (
     req: IAuthRequest,
     res: Response,
@@ -15,7 +13,7 @@ export const newAuthMiddleware = (service: IUserService) => {
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        throw new UnauthorizedError('No token provided');
+        throw new UnauthorizedError('No access token provided');
       }
 
       const [, token] = authHeader.split(' ');
@@ -23,12 +21,10 @@ export const newAuthMiddleware = (service: IUserService) => {
       const decoded = verifyToken(token);
 
       if (!decoded) {
-        throw new UnauthorizedError('Invalid or expired token');
+        throw new UnauthorizedError('Invalid or expired access token');
       }
 
-      const filteredUser = await service.getById(decoded.id);
-
-      req.user = filteredUser;
+      req.user = decoded;
 
       next();
     } catch (error) {

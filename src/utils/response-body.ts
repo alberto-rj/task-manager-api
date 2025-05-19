@@ -8,9 +8,9 @@ export function record<T>(payload: { resource: T }): {
   };
 }
 
-export function records<T>(payload: { resources: T[] }): {
+export function records<T>(payload: { resources: T }): {
   success: boolean;
-  data: { results: T[] };
+  data: { results: T };
 } {
   return {
     success: true,

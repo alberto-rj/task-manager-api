@@ -6,7 +6,7 @@ import {
   toSigninInput,
   toSignupInput,
 } from '../dtos/auth.dto';
-import { IAuthService } from '../services/i-auth.service';
+import { IAuthService } from '../services/i-auth-service';
 import { auth } from '../utils/response-body';
 
 export const newAuthController = (service: IAuthService) => {
