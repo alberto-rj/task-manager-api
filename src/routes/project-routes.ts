@@ -6,7 +6,7 @@ import {
   newIProjectRepository,
   newIUserRepository,
 } from '../utils/repository-factory';
-import { newAuthMiddleware } from '@/middlewares/auth-middleware';
+import { newAuthMiddleware } from '../middlewares/auth-middleware';
 
 const authMiddleware = newAuthMiddleware();
 

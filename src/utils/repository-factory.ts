@@ -10,13 +10,20 @@ export abstract class RepositoryFactory {
   }
 }
 
-export const newInstance = RepositoryFactory.newInstance;
+export const newInstance = () => {
+  return RepositoryFactory.newInstance();
+};
 
-export const repositoryFactory = RepositoryFactory.newInstance();
+export const repositoryFactory = newInstance();
 
-export const newIRefreshTokenRepository =
-  repositoryFactory.newIRefreshTokenRepository;
+export const newIRefreshTokenRepository = () => {
+  return repositoryFactory.newIRefreshTokenRepository();
+};
 
-export const newIProjectRepository = repositoryFactory.newIProjectRepository;
+export const newIProjectRepository = () => {
+  return repositoryFactory.newIProjectRepository();
+};
 
-export const newIUserRepository = repositoryFactory.newIUserRepository;
+export const newIUserRepository = () => {
+  return repositoryFactory.newIUserRepository();
+};

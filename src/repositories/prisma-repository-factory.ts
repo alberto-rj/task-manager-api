@@ -9,7 +9,11 @@ import { PrismaProjectRepository } from '../repositories/prisma-project.reposito
 import { PrismaClient } from 'generated/prisma';
 
 export class PrismaRepositoryFactory implements IRepositoryFactory {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   newIUserRepository(): IUserRepository {
     return new PrismaUserRepository(this.prisma);
