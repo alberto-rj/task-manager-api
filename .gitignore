@@ -1,4 +1,23 @@
-node_modules
-dist
-.env
+# dependencies
+node_modules/
+
+# build
+dist/
+build/
+
+# prisma
 generated/prisma/
+
+# env
+.env
+.env.*
+
+# npm
+npm-debug.log*
+
+# yarn
+yarn-debug.log*
+yarn-error.log*
+
+# DS Store
+.DS_Store
