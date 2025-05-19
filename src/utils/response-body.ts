@@ -1,177 +1,104 @@
-export type PaginatedInput<T> = {
-  resources: T[];
-  total: number;
-  page: number;
-  limit: number;
-};
-
-export type PaginatedOutput<T> = {
+export function record<T>(payload: { resource: T }): {
   success: boolean;
+  data: { results: T[] };
+} {
+  return {
+    success: true,
+    data: { results: [payload.resource] },
+  };
+}
+
+export function records<T>(payload: { resources: T[] }): {
+  success: boolean;
+  data: { results: T[] };
+} {
+  return {
+    success: true,
+    data: { results: payload.resources },
+  };
+}
+
+export function paginated<T>(payload: {
+  resources: T[];
   pagination: {
     total: number;
     page: number;
-    limit: number;
     pages: number;
-    data: T[];
+    limit: number;
+    hasNext: boolean;
+    hasPrev: boolean;
   };
-};
-
-export function paginated<T>({
-  resources,
-  total,
-  page,
-  limit,
-}: PaginatedInput<T>): PaginatedOutput<T> {
-  return {
-    success: true,
+}): {
+  success: boolean;
+  data: {
+    results: T[];
     pagination: {
-      total,
-      page,
-      limit,
-      pages: Math.ceil(total / limit),
-      data: resources,
-    },
+      total: number;
+      page: number;
+      pages: number;
+      limit: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
   };
-}
-
-export type RecordInput<T> = {
-  resource: T;
-};
-
-export type RecordOutput<T> = {
-  success: boolean;
-  data: T;
-};
-
-export function record<T>({ resource }: RecordInput<T>): RecordOutput<T> {
+} {
   return {
     success: true,
-    data: resource,
+    data: { ...payload, results: payload.resources },
   };
 }
 
-export type RecordsInput<T> = {
-  resources: T[];
-};
-
-export type RecordsOutput<T> = {
+export function auth<T>(payload: { accessToken: string; user: T }): {
   success: boolean;
-  data: T[];
-};
-
-export function records<T>({ resources }: RecordsInput<T>): RecordsOutput<T> {
+  data: { accessToken: string; user: T };
+} {
   return {
     success: true,
-    data: resources,
+    data: { ...payload },
   };
 }
 
-export type AuthInput<T> = {
-  accessToken: string;
-  user: T;
-};
-
-export type AuthOutput<T> = {
-  success: boolean;
-  accessToken: string;
-  user: T;
-};
-
-export function auth<T>({ accessToken, user }: AuthInput<T>): AuthOutput<T> {
-  return {
-    success: true,
-    accessToken,
-
-    user,
-  };
-}
-
-export type ErrorInput = {
+export function error<T>(payload: {
+  code: number;
+  name: string;
   message: string;
-};
-
-export type ErrorOutput = {
+  details?: T;
+}): {
   success: boolean;
-  message: string;
-};
-
-export function error({
-  message = 'Operation failed',
-}: ErrorInput): ErrorOutput {
+  data: { error: { code: number; name: string; message: string; details?: T } };
+} {
   return {
     success: false,
-    message,
+    data: { error: { ...payload } },
   };
 }
 
-export type ErrorsInput<T> = {
-  errors: T[];
-};
-
-export type ErrorsOutput<T> = {
+export function success(payload: { message: string }): {
   success: boolean;
-  errors: T[];
-};
-
-export function errors<T>({ errors }: ErrorsInput<T>): ErrorsOutput<T> {
-  return {
-    success: false,
-    errors,
-  };
-}
-
-export type CreatedInput<T> = {
-  resource: T;
-  message: string;
-};
-
-export type CreatedOutput<T> = {
-  success: boolean;
-  message: string;
-  data: T;
-};
-
-export function created<T>({
-  resource,
-  message = 'Resource created successfully',
-}: CreatedInput<T>): CreatedOutput<T> {
+  data: { message: string };
+} {
   return {
     success: true,
-    message,
-    data: resource,
+    data: payload,
   };
 }
 
-export type UpdatedInput<T> = {
-  resource: T;
-};
-
-export type UpdatedOutput<T> = {
+export function updated<T>(payload: { resource: T }): {
   success: boolean;
-  data: T;
-};
-
-export function updated<T>({ resource }: UpdatedInput<T>): UpdatedOutput<T> {
+  data: { results: T[] };
+} {
   return {
     success: true,
-    data: resource,
+    data: { results: [payload.resource] },
   };
 }
 
-export type DeletedInput = {
-  message: string;
+export default {
+  auth,
+  error,
+  success,
+  paginated,
+  record,
+  records,
+  updated,
 };
-
-export type DeletedOutput = {
-  success: boolean;
-  message: string;
-};
-
-export function deleted({
-  message = 'Resource deleted successfully',
-}: DeletedInput): DeletedOutput {
-  return {
-    success: true,
-    message,
-  };
-}

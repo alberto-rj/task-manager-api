@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/app-error';
 import { logger } from '../utils/logger';
-import { error as resBodyError } from '../utils/response-body';
+import resBody from '../utils/response-body';
 
 export const errorHandler = (
   error: Error,
@@ -12,9 +12,15 @@ export const errorHandler = (
   logger.error(error);
 
   if (error instanceof AppError) {
-    res.status(error.statusCode).json(error.format());
+    res.status(error.code).json(error.format());
     return;
   }
 
-  res.status(500).json(resBodyError({ message: 'Internal server error' }));
+  res.status(500).json(
+    resBody.error({
+      code: 500,
+      name: 'InternalServerError',
+      message: 'Unexpected error',
+    }),
+  );
 };

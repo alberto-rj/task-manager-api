@@ -1,21 +1,23 @@
-export interface IAppErrorFormat {
-  success: boolean;
-  message: string;
-}
+import responseBody from './response-body';
 
-export abstract class AppError<
-  T extends IAppErrorFormat = IAppErrorFormat,
-> extends Error {
-  public readonly statusCode: number;
+export abstract class AppError<T = undefined> extends Error {
+  public readonly code: number;
+  protected details?: T;
 
-  constructor(message: string, statusCode: number) {
+  constructor(message: string, code: number, details?: T) {
     super(message);
-    this.statusCode = statusCode;
+    this.code = code;
+    this.details = details;
     Error.captureStackTrace(this, this.constructor);
   }
 
-  format(): IAppErrorFormat {
-    return { success: false, message: this.message };
+  format() {
+    return responseBody.error<T>({
+      code: this.code,
+      name: this.name,
+      message: this.message,
+      details: this.details,
+    });
   }
 }
 
@@ -54,23 +56,12 @@ export type ValidationErrorDetails = {
   message: string;
 };
 
-export interface IValidationErrorFormat extends IAppErrorFormat {
-  details: ValidationErrorDetails[];
-}
-
-export class ValidationError extends AppError<IValidationErrorFormat> {
-  private details: ValidationErrorDetails[];
-
+export class ValidationError extends AppError<ValidationErrorDetails[]> {
   constructor(
     details: ValidationErrorDetails[],
     message: string = 'Validation error',
   ) {
-    super(message, 422);
-    this.details = details;
-  }
-
-  format(): IValidationErrorFormat {
-    return { ...super.format(), details: this.details };
+    super(message, 422, details);
   }
 }
 
@@ -79,22 +70,11 @@ export type ConflictErrorDetails = {
   message: string;
 };
 
-export interface IConflictErrorFormat extends IAppErrorFormat {
-  details: ConflictErrorDetails[];
-}
-
-export class ConflictError extends AppError<IConflictErrorFormat> {
-  private details: ConflictErrorDetails[];
-
+export class ConflictError extends AppError<ConflictErrorDetails[]> {
   constructor(
     details: ConflictErrorDetails[],
     message: string = 'Conflict error',
   ) {
-    super(message, 409);
-    this.details = details;
-  }
-
-  format(): IConflictErrorFormat {
-    return { ...super.format(), details: this.details };
+    super(message, 409, details);
   }
 }
