@@ -2,6 +2,7 @@ import { PrismaClient } from 'generated/prisma';
 import {
   Project,
   ProjectCreateInput,
+  ProjectFilterInput,
   ProjectUpdateInput,
 } from '../models/project-model';
 import { IProjectRepository } from './i-project-repository';
@@ -13,9 +14,25 @@ export class PrismaProjectRepository implements IProjectRepository {
     this.prisma = prisma;
   }
 
-  async findAllForAuthor(authorId: string): Promise<Project[]> {
+  async findAllWithPagination(
+    filters: ProjectFilterInput,
+    pagination: any,
+  ): Promise<void> {}
+
+  async findAllWithFilters({
+    authorId,
+    includeArchived,
+  }: ProjectFilterInput): Promise<Project[]> {
+    const query: Record<string, any> = { authorId };
+
+    if (!includeArchived) {
+      query.isArchived = false;
+    }
+
     const persistedProjects = await this.prisma.project.findMany({
-      where: { authorId },
+      where: {
+        ...query,
+      },
     });
 
     return persistedProjects;

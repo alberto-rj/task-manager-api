@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 import { validate } from '../utils/validate';
-import { projectId } from '@/dtos/task.dto';
 
 export const id = z
   .string({ message: 'Must be string' })
@@ -104,10 +103,10 @@ export const getProjectsRIOSchema = z.object({
       .string()
       .regex(/^(?:true|false)$/i, {
         message:
-          'Must be either "true", or "false". If a value is not provided, it defaults to "false"',
+          'Must be either "true" or "false". If a value is not provided, it defaults to "false"',
       })
       .default('false')
-      .transform((arg) => new Boolean(arg).valueOf()),
+      .transform((arg) => arg === 'true'),
   }),
 });
 

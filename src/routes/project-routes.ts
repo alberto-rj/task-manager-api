@@ -19,13 +19,11 @@ const projectController = newProjectController(
 
 const projectRoutes = Router();
 
-projectRoutes.get('/', (req, res) => {
-  res.status(200).json({
-    success: true,
-    timeStamp: new Date().toISOString(),
-    message: `Get projects`,
-  });
-});
+projectRoutes.get(
+  '/',
+  authMiddleware.authenticate,
+  projectController.getProjects,
+);
 
 projectRoutes.post(
   '/',
@@ -43,6 +41,12 @@ projectRoutes.patch(
   '/:projectId',
   authMiddleware.authenticate,
   projectController.updateProject,
+);
+
+projectRoutes.patch(
+  '/:projectId/archive',
+  authMiddleware.authenticate,
+  projectController.archiveProject,
 );
 
 projectRoutes.delete(

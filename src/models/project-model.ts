@@ -12,3 +12,8 @@ export type ProjectUpdateInput = {
   isArchived?: boolean;
   authorId?: string;
 };
+
+export type ProjectFilterInput = {
+  includeArchived: boolean;
+  authorId: string;
+};

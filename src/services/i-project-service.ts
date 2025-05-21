@@ -7,7 +7,7 @@ import {
 } from '../dtos/project.dto';
 
 export interface IProjectService {
-  // getAll(authorId: string, dto: GetProjectsDTO): Promise<ProjectMinimalDTO[]>;
+  getAll(authorId: string, dto: GetProjectsDTO): Promise<ProjectMinimalDTO[]>;
 
   getById(id: string, authorId: string): Promise<ProjectMinimalDTO>;
 

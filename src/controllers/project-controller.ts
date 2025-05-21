@@ -13,23 +13,25 @@ import {
 } from '../validators/project-validator';
 
 export const newProjectController = (service: IProjectService) => {
-  // const getProjects = async (
-  //   req: IAuthRequest,
-  //   res: Response,
-  //   next: NextFunction,
-  // ) => {
-  //   try {
-  //     const rio = toGetProjectsRIO(req);
-  //     const authorId = (req.user as IUserPayload).id;
-  //     const dto = await service.getAll(authorId, rio.query);
+  const getProjects = async (
+    req: IAuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const {
+        query: { includeArchived },
+      } = toGetProjectsRIO(req);
+      const authorId = (req.user as IUserPayload).id;
+      const dto = await service.getAll(authorId, { includeArchived });
 
-  //     res
-  //       .status(200)
-  //       .json(responseBody.records<typeof dto>({ resources: dto }));
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
+      res
+        .status(200)
+        .json(responseBody.records<typeof dto>({ resources: dto }));
+    } catch (error) {
+      next(error);
+    }
+  };
 
   const getProject = async (
     req: IAuthRequest,
@@ -130,6 +132,7 @@ export const newProjectController = (service: IProjectService) => {
     createProject,
     deleteProject,
     getProject,
+    getProjects,
     updateProject,
   };
 };

@@ -17,9 +17,17 @@ export class ProjectService implements IProjectService {
     private service: IUserService,
   ) {}
 
-  // async getAll(authorId: string, dto: GetProjectsDTO): Promise<ProjectMinimalDTO[]> {
-  //   const persistedProject = await this.projectRepo.findAll()
-  // }
+  async getAll(
+    authorId: string,
+    dto: GetProjectsDTO,
+  ): Promise<ProjectMinimalDTO[]> {
+    const persistedProjects = await this.projectRepo.findAllWithFilters({
+      authorId,
+      includeArchived: dto.includeArchived,
+    });
+
+    return persistedProjects.map(toProjectMinimalDTO);
+  }
 
   async getById(id: string, authorId: string): Promise<ProjectMinimalDTO> {
     const persistedProject = await this.projectRepo.findById(id);
