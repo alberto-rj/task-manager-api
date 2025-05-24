@@ -18,7 +18,10 @@ const start = () => {
   setup();
   if (!env.isTest()) {
     app.listen(env.server.port, () => {
-      logger.info(`Server running on port ${env.server.port}`);
+      logger.info(`🚀 Server running on port ${env.server.port}`);
+      logger.info(
+        `📊 Health check: http://localhost:${env.server.port}/api/health`,
+      );
     });
   }
 };
