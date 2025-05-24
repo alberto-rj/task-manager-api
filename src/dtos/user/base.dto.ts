@@ -2,7 +2,7 @@ import validator from 'validator';
 import { z } from 'zod';
 
 import { create } from '@/types/sanitize-string-builder';
-import { uuid } from '../common/base.dto';
+import { uuid } from '@/dtos/common/base.dto';
 
 export const id = uuid();
 
