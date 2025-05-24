@@ -3,7 +3,7 @@ import {
   toUserOutput,
   UpdateUserInput,
   UserOutput,
-} from '@/dtos/user.dto';
+} from '@/dtos/user/user.dto';
 import { IUserService } from '@/interfaces/services/i-user-service';
 import { IUserRepository } from '@/interfaces/repositories/i-user-repository';
 import {

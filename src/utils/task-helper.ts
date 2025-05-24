@@ -1,11 +1,15 @@
 import { Task } from '@/models/task-model';
-import { MinimalTaskROO } from '@/dtos/task-r-o-o';
+import { MinimalTaskROO } from '@/dtos/task/task-r-o-o';
 import {
   CreateTaskDbIO,
   FindTasksDbIO,
   UpdateTaskDbIO,
-} from '@/dtos/task-db-i-o';
-import { CreateTaskSIO, GetTasksSIO, UpdateTaskSIO } from '@/dtos/task-s-i-o';
+} from '@/dtos/task/task-db-i-o';
+import {
+  CreateTaskSIO,
+  GetTasksSIO,
+  UpdateTaskSIO,
+} from '@/dtos/task/task-s-i-o';
 
 export const toMinimalTaskROO = (task: Task): MinimalTaskROO => {
   return {

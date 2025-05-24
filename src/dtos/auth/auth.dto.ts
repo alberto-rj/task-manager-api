@@ -10,7 +10,7 @@ import {
   password,
   username,
   UserOutput,
-} from '@/dtos/user.dto';
+} from '@/dtos/user/user.dto';
 import { validate } from '@/utils/validate';
 
 export const signinInputSchema = z.object({

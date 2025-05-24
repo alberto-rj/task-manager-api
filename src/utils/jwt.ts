@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 import env from '@/config/env';
-import { IUserPayload } from '@/dtos/auth.dto';
+import { IUserPayload } from '@/dtos/auth/auth.dto';
 import crypto from 'crypto';
 
 export function generateAccessToken(payload: IUserPayload) {

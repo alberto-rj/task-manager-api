@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 
-import { IAuthRequest, IUserPayload } from '@/dtos/auth.dto';
+import { IAuthRequest, IUserPayload } from '@/dtos/auth/auth.dto';
 import { IProjectService } from '@/interfaces/services/i-project-service';
 import responseBody from '@/utils/response-body';
 import {

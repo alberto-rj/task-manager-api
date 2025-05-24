@@ -6,8 +6,8 @@ import {
   GetTasksSIO,
   UpdateTaskSIO,
   UpdateTaskStatusSIO,
-} from '../../dtos/task-s-i-o';
-import { MinimalTaskROO } from '../../dtos/task-r-o-o';
+} from '../../dtos/task/task-s-i-o';
+import { MinimalTaskROO } from '../../dtos/task/task-r-o-o';
 
 export interface ITaskService {
   create(sio: CreateTaskSIO): Promise<MinimalTaskROO>;

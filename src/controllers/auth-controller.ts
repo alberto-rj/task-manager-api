@@ -5,7 +5,7 @@ import {
   toRefreshTokenInput,
   toSigninInput,
   toSignupInput,
-} from '@/dtos/auth.dto';
+} from '@/dtos/auth/auth.dto';
 import { IAuthService } from '@/interfaces/services/i-auth-service';
 import { auth } from '@/utils/response-body';
 

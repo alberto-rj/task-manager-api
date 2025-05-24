@@ -1,4 +1,4 @@
-import { CreateUserInput, UpdateUserInput } from '@/dtos/user.dto';
+import { CreateUserInput, UpdateUserInput } from '@/dtos/user/user.dto';
 import { User } from '@/models/user-model';
 
 export interface IUserRepository {

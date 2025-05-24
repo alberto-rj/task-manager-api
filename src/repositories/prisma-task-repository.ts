@@ -5,7 +5,7 @@ import {
   FindTaskDbIO,
   UpdateTaskDbIO,
   DeleteTaskDbIO,
-} from '@/dtos/task-db-i-o';
+} from '@/dtos/task/task-db-i-o';
 import { Task } from '@/models/task-model';
 import { ITaskRepository } from '@/interfaces/repositories/i-task-repository';
 

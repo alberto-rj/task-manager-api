@@ -6,7 +6,7 @@ import {
   toProjectMinimalDTO,
   ProjectMinimalDTO,
   GetProjectsDTO,
-} from '@/dtos/project.dto';
+} from '@/dtos/project/project.dto';
 import { IProjectService } from '@/interfaces/services/i-project-service';
 import { IUserService } from '@/interfaces/services/i-user-service';
 import { ForbiddenError, NotFoundError } from '@/utils/app-error';

@@ -7,13 +7,13 @@ import {
   toIUserPayload,
   RefreshTokenInput,
   RefreshTokenOutput,
-} from '@/dtos/auth.dto';
+} from '@/dtos/auth/auth.dto';
 import { IAuthService } from '@/interfaces/services/i-auth-service';
 import { IUserService } from '@/interfaces/services/i-user-service';
 import { NotFoundError, UnauthorizedError } from '@/utils/app-error';
 import { verifyPassword } from '@/utils/password-security';
 import { generateAccessToken, generateRefreshToken } from '@/utils/jwt';
-import { toUserOutput } from '@/dtos/user.dto';
+import { toUserOutput } from '@/dtos/user/user.dto';
 import { IRefreshTokenRepository } from '@/interfaces/repositories/i-refresh-token-repository';
 import env from '@/config/env';
 

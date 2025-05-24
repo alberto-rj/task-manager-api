@@ -6,8 +6,8 @@ import {
   UpdateTaskStatusSIO,
   ArchiveTaskSIO,
   DeleteTaskSIO,
-} from '@/dtos/task-s-i-o';
-import { MinimalTaskROO } from '@/dtos/task-r-o-o';
+} from '@/dtos/task/task-s-i-o';
+import { MinimalTaskROO } from '@/dtos/task/task-r-o-o';
 import { ITaskService } from '@/interfaces/services/i-task-service';
 import { ITaskRepository } from '@/interfaces/repositories/i-task-repository';
 import {
