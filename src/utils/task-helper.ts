@@ -1,4 +1,4 @@
-import { Task } from '@/models/task-model';
+import { Task } from '@/models/task.model';
 import { MinimalTaskROO } from '@/dtos/task/task-r-o-o';
 import {
   CreateTaskDbIO,

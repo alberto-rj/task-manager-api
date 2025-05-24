@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 import { z } from 'zod';
 
-import { User } from '@/models/user-model';
+import { User } from '@/models/user.model';
 import {
   email,
   firstName,

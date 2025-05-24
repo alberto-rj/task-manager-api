@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { TaskPriority, TaskStatus } from '@/models/task-model';
+import { TaskPriority, TaskStatus } from '@/models/task.model';
 import { compareDates } from '@/utils/comparator';
 import { validate } from '@/utils/validate';
 

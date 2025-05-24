@@ -4,7 +4,7 @@ import {
   ProjectCreateInput,
   ProjectFilterInput,
   ProjectUpdateInput,
-} from '@/models/project-model';
+} from '@/models/project.model';
 import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
 
 export class PrismaProjectRepository implements IProjectRepository {

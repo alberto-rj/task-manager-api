@@ -6,7 +6,7 @@ import {
   UpdateTaskDbIO,
   DeleteTaskDbIO,
 } from '@/dtos/task/task-db-i-o';
-import { Task } from '@/models/task-model';
+import { Task } from '@/models/task.model';
 import { ITaskRepository } from '@/interfaces/repositories/i-task-repository';
 
 export class PrismaTaskRepository implements ITaskRepository {

@@ -1,4 +1,4 @@
-export { Project } from 'generated/prisma';
+import { Project } from '@/prisma';
 
 export type ProjectCreateInput = {
   name: string;
@@ -17,3 +17,5 @@ export type ProjectFilterInput = {
   includeArchived: boolean;
   authorId: string;
 };
+
+export { Project };
