@@ -8,57 +8,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Project {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  isArchived  Boolean  @default(false)
-  authorId    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  User        User     @relation(fields: [authorId], references: [id])
-  Task        Task[]
-}
-
-model Task {
-  id                         String       @id @default(uuid())
-  title                      String
-  description                String?
-  status                     TaskStatus   @default(PENDING)
-  priority                   TaskPriority @default(MEDIUM)
-  dueDate                    DateTime?
-  isArchived                 Boolean      @default(false)
-  authorId                   String
-  projectId                  String
-  assigneeId                 String
-  createdAt                  DateTime     @default(now())
-  updatedAt                  DateTime     @updatedAt
-  User_Task_assigneeIdToUser User        @relation("Task_assigneeIdToUser", fields: [assigneeId], references: [id])
-  User_Task_authorIdToUser   User         @relation("Task_authorIdToUser", fields: [authorId], references: [id])
-  Project                    Project      @relation(fields: [projectId], references: [id])
-}
-
 model User {
-  id                         String    @id @default(uuid())
-  firstName                  String
-  lastName                   String
-  email                      String    @unique
-  password                   String
-  createdAt                  DateTime  @default(now())
-  updatedAt                  DateTime  @updatedAt
-  username                   String    @unique
-  Project                    Project[]
-  Task_Task_assigneeIdToUser Task[]    @relation("Task_assigneeIdToUser")
-  Task_Task_authorIdToUser   Task[]    @relation("Task_authorIdToUser")
+  id String @id @default(uuid())
+  firstName String
+  lastName String
+  username String @unique
+  email String @unique
+  password String
+  isActive Boolean @default(true)
+  timezone String?
+  bio String?
+  avatar String?
+  lastLoginAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime @updatedAt
 
+  // relationships
+  createdProjects Project[] @relation("ProjectAuthor")
+  createdTasks Task[] @relation("TaskAuthor")
+  assignedTasks Task[] @relation("TaskAssignee")
+  members ProjectMember[]
   refreshTokens RefreshToken[]
 }
 
-enum TaskPriority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
+model Project {
+  id String @id @default(uuid())
+  name String
+  description String?
+  coverImage String?
+  startDate DateTime?
+  endDate DateTime?
+  isPublic Boolean @default(false)
+  isArchived Boolean @default(false)
+  authorId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relationships
+  author User @relation("ProjectAuthor",fields: [authorId], references: [id])
+  members ProjectMember[]
+  tasks Task[]
+}
+
+model ProjectMember {
+  id String @id @default(uuid())
+  projectId String
+  memberId String
+  role ProjectMemberRole @default(VIEWER)
+  inviteStatus ProjectMemberInviteStatus @default(PENDING)
+  invitedAt DateTime
+  joinedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relationships
+  project Project @relation(fields: [projectId], references: [id])
+  member User @relation(fields: [memberId], references: [id])
+}
+
+enum ProjectMemberRole {
+  AUTHOR
+  ADMIN 
+  CONTRIBUTOR 
+  VIEWER
+}
+
+enum ProjectMemberInviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Task {
+  id String @id @default(uuid())
+  title String
+  description String?
+  status TaskStatus @default(PENDING)
+  position Int
+  priority TaskPriority @default(MEDIUM)
+  dueDate DateTime?
+  completedAt DateTime?
+  isArchived Boolean @default(false)
+  authorId String
+  projectId String
+  assignedToId String?
+  parentTaskId String?
+  createAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relationships
+  subTasks Task[] @relation("SubTasks")
+
+  author User @relation("TaskAuthor", fields: [authorId], references: [id])
+
+  assignedTo User? @relation("TaskAssignee",fields: [assignedToId], references: [id])
+  
+  project Project @relation(fields: [projectId], references: [id])
+  
+  parentTask Task? @relation("SubTasks",fields: [parentTaskId], references: [id])
 }
 
 enum TaskStatus {
@@ -69,13 +116,21 @@ enum TaskStatus {
   CANCELLED
 }
 
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 model RefreshToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
+  id String @id @default(uuid())
+  token String @unique
+  userId String
   expiresAt DateTime
   createdAt DateTime @default(now())
-  userId    String
+  updatedAt DateTime @updatedAt
 
   // relationships
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 }
