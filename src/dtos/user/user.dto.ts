@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { User } from '../models/user-model';
+import { User } from '@/models/user.model';
 
 export const id = z.string().uuid('ID Must be in UUID format');
 

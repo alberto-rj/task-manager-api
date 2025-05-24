@@ -1,6 +1,20 @@
 import { z } from 'zod';
 
-export const uuid = z.string().uuid({ message: 'Must be a valid UUID' });
+import { create } from '@/types/sanitize-string-builder';
+
+export const uuid = (fieldName: string = 'ID') =>
+  z
+    .string({ required_error: `${fieldName} is required.` })
+    .uuid({
+      message: `${fieldName} must be a valid UUID v4 (e.g., "123e4567-e89b-12d3-a456-426614174000").`,
+    })
+    .transform((value) =>
+      create(value)
+        .normalizeWhitespace()
+        .removeControlChars()
+        .escapeHTML()
+        .build(),
+    );
 
 export const page = z.coerce.number().int().min(1).default(1);
 
@@ -15,7 +29,7 @@ export const createdAt = z.date();
 export const updatedAt = z.date();
 
 export const uuidParamDTOSchema = z.object({
-  id: uuid,
+  id: uuid('id'),
 });
 
 export const paginationQueryDTOSchema = z.object({
