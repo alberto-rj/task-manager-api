@@ -1,5 +1,5 @@
-import { CreateUserInput, UpdateUserInput } from '../dtos/user.dto';
-import { User } from '../models/user-model';
+import { CreateUserInput, UpdateUserInput } from '@/dtos/user.dto';
+import { User } from '@/models/user-model';
 
 export interface IUserRepository {
   findAll(): Promise<User[]>;

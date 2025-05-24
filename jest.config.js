@@ -8,9 +8,11 @@ module.exports = {
     'src/**/*.ts',
     '!src/**/*.d.ts',
     '!src/server.ts',
-    '!src/app.ts',
+    '!src/index.ts',
   ],
   moduleNameMapper: {
     '@/(.*)': '<rootDir>/src/$1',
+    '@/prisma': '<rootDir>/generated/prisma',
   },
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
 };

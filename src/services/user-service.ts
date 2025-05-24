@@ -3,15 +3,15 @@ import {
   toUserOutput,
   UpdateUserInput,
   UserOutput,
-} from '../dtos/user.dto';
-import { IUserService } from './i-user-service';
-import { IUserRepository } from '../repositories/i-user-repository';
+} from '@/dtos/user.dto';
+import { IUserService } from '@/interfaces/services/i-user-service';
+import { IUserRepository } from '@/interfaces/repositories/i-user-repository';
 import {
   ConflictError,
   ConflictErrorDetails,
   NotFoundError,
-} from '../utils/app-error';
-import { hashPassword } from '../utils/password-security';
+} from '@/utils/app-error';
+import { hashPassword } from '@/utils/password-security';
 
 export class UserService implements IUserService {
   constructor(private repo: IUserRepository) {}

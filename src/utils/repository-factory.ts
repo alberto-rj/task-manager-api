@@ -1,5 +1,5 @@
 import prisma from '../config/prisma';
-import { IRepositoryFactory } from '../repositories/i-repository-factory';
+import { IRepositoryFactory } from '../interfaces/repositories/i-repository-factory';
 import { PrismaRepositoryFactory } from '../repositories/prisma-repository-factory';
 
 export abstract class RepositoryFactory {

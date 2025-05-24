@@ -1,4 +1,4 @@
-import { IProjectRepository } from '../repositories/i-project-repository';
+import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
 import {
   CreateProjectDTO,
   UpdateProjectDTO,
@@ -6,10 +6,10 @@ import {
   toProjectMinimalDTO,
   ProjectMinimalDTO,
   GetProjectsDTO,
-} from '../dtos/project.dto';
-import { IProjectService } from './i-project-service';
-import { IUserService } from './i-user-service';
-import { ForbiddenError, NotFoundError } from '../utils/app-error';
+} from '@/dtos/project.dto';
+import { IProjectService } from '@/interfaces/services/i-project-service';
+import { IUserService } from '@/interfaces/services/i-user-service';
+import { ForbiddenError, NotFoundError } from '@/utils/app-error';
 
 export class ProjectService implements IProjectService {
   constructor(

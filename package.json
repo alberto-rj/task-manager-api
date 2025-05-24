@@ -3,13 +3,20 @@
   "version": "1.0.0",
   "main": "./dist/index.js",
   "scripts": {
-    "start": "node ./dist/index.js",
-    "dev": "nodemon ./src/index.ts",
+    "start": "node -r module-alias/register ./dist/index.js",
+    "dev": "nodemon -r tsconfig-paths/register ./src/index.ts",
     "build": "tsc",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
+  },
+  "_moduleAliases": {
+    "@": "./dist"
   },
   "dependencies": {
     "@prisma/client": "^6.7.0",

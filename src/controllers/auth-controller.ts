@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { env } from '../config/env';
+import env from '@/config/env';
 import {
   toRefreshTokenInput,
   toSigninInput,
   toSignupInput,
-} from '../dtos/auth.dto';
-import { IAuthService } from '../services/i-auth-service';
-import { auth } from '../utils/response-body';
+} from '@/dtos/auth.dto';
+import { IAuthService } from '@/interfaces/services/i-auth-service';
+import { auth } from '@/utils/response-body';
 
 export const newAuthController = (service: IAuthService) => {
   const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
@@ -15,7 +15,7 @@ export const newAuthController = (service: IAuthService) => {
       httpOnly: true,
       secure: env.isProduction(),
       sameSite: 'strict',
-      maxAge: env.refreshTokenExpiresInDays * 24 * 60 * 60 * 1000,
+      maxAge: env.auth.refreshTokenExpiresInDays * 24 * 60 * 60 * 1000,
     });
   };
 

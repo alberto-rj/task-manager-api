@@ -1,6 +1,6 @@
-import { PrismaClient, RefreshToken } from 'generated/prisma';
+import { PrismaClient, RefreshToken } from '@/prisma';
 
-import { IRefreshTokenRepository } from './i-refresh-token-repository';
+import { IRefreshTokenRepository } from '@/interfaces/repositories/i-refresh-token-repository';
 
 export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
   private prisma: PrismaClient;

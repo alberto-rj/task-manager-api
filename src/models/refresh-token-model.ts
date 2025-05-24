@@ -1,1 +1,1 @@
-export { RefreshToken } from 'generated/prisma';
+export { RefreshToken } from '@/prisma';

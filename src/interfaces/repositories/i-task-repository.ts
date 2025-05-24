@@ -4,8 +4,8 @@ import {
   FindTaskDbIO,
   FindTasksDbIO,
   UpdateTaskDbIO,
-} from '../dtos/task-db-i-o';
-import { Task } from '../models/task-model';
+} from '@/dtos/task-db-i-o';
+import { Task } from '@/models/task-model';
 
 export interface ITaskRepository {
   create(dbIO: CreateTaskDbIO): Promise<Task>;

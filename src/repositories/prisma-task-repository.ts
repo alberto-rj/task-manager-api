@@ -1,13 +1,13 @@
-import { PrismaClient } from 'generated/prisma';
+import { PrismaClient } from '@/prisma';
 import {
   CreateTaskDbIO,
   FindTasksDbIO,
   FindTaskDbIO,
   UpdateTaskDbIO,
   DeleteTaskDbIO,
-} from '../dtos/task-db-i-o';
-import { Task } from '../models/task-model';
-import { ITaskRepository } from './i-task-repository';
+} from '@/dtos/task-db-i-o';
+import { Task } from '@/models/task-model';
+import { ITaskRepository } from '@/interfaces/repositories/i-task-repository';
 
 export class PrismaTaskRepository implements ITaskRepository {
   constructor(private prisma: PrismaClient) {}

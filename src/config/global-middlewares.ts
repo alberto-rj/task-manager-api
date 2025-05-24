@@ -5,7 +5,7 @@ import express, { Express } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 
-import { env } from './env';
+import env from '@/config/env';
 
 export const setupGlobalMiddlewares = (app: Express) => {
   // Security

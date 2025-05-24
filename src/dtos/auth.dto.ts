@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 import { z } from 'zod';
 
-import { User } from '../models/user-model';
+import { User } from '@/models/user-model';
 import {
   email,
   firstName,
@@ -10,8 +10,8 @@ import {
   password,
   username,
   UserOutput,
-} from './user.dto';
-import { validate } from '../utils/validate';
+} from '@/dtos/user.dto';
+import { validate } from '@/utils/validate';
 
 export const signinInputSchema = z.object({
   identifier: z.string().min(1, 'Identifier can not be empty'),

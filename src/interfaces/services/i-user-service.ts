@@ -1,4 +1,8 @@
-import { CreateUserInput, UpdateUserInput, UserOutput } from '../dtos/user.dto';
+import {
+  CreateUserInput,
+  UpdateUserInput,
+  UserOutput,
+} from '../../dtos/user.dto';
 
 export interface IUserService {
   getAll(): Promise<UserOutput[]>;

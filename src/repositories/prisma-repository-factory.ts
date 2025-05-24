@@ -1,7 +1,7 @@
-import { IRepositoryFactory } from '../repositories/i-repository-factory';
-import { IRefreshTokenRepository } from './i-refresh-token-repository';
-import { IUserRepository } from './i-user-repository';
-import { IProjectRepository } from './i-project-repository';
+import { IRepositoryFactory } from '../interfaces/repositories/i-repository-factory';
+import { IRefreshTokenRepository } from '../interfaces/repositories/i-refresh-token-repository';
+import { IUserRepository } from '../interfaces/repositories/i-user-repository';
+import { IProjectRepository } from '../interfaces/repositories/i-project-repository';
 import { PrismaUserRepository } from './prisma-user-repository';
 import { PrismaRefreshTokenRepository } from '../repositories/prisma-refresh-token.repository';
 import { PrismaProjectRepository } from '../repositories/prisma-project.repository';

@@ -1,12 +1,12 @@
 import { Router } from 'express';
 
-import { newProjectController } from '../controllers/project-controller';
-import { newIProjectService, newIUserService } from '../utils/service-factory';
+import { newProjectController } from '@/controllers/project-controller';
+import { newIProjectService, newIUserService } from '@/utils/service-factory';
 import {
   newIProjectRepository,
   newIUserRepository,
-} from '../utils/repository-factory';
-import { newAuthMiddleware } from '../middlewares/auth-middleware';
+} from '@/utils/repository-factory';
+import { newAuthMiddleware } from '@/middlewares/auth-middleware';
 
 const authMiddleware = newAuthMiddleware();
 

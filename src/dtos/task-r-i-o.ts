@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { TaskPriority, TaskStatus } from '../models/task-model';
-import { compareDates } from '../utils/comparator';
-import { validate } from '../utils/validate';
+import { TaskPriority, TaskStatus } from '@/models/task-model';
+import { compareDates } from '@/utils/comparator';
+import { validate } from '@/utils/validate';
 
 export const id = z
   .string({ message: 'Must be string' })

@@ -6,17 +6,17 @@ import {
   UpdateTaskStatusSIO,
   ArchiveTaskSIO,
   DeleteTaskSIO,
-} from '../dtos/task-s-i-o';
-import { MinimalTaskROO } from '../dtos/task-r-o-o';
-import { ITaskService } from './i-task-service';
-import { ITaskRepository } from '../repositories/i-task-repository';
+} from '@/dtos/task-s-i-o';
+import { MinimalTaskROO } from '@/dtos/task-r-o-o';
+import { ITaskService } from '@/interfaces/services/i-task-service';
+import { ITaskRepository } from '@/interfaces/repositories/i-task-repository';
 import {
   toCreateTaskDbIO,
   toFindTasksDbIo,
   toMinimalTaskROO,
   toUpdateTaskDbIO,
-} from '../utils/task-helper';
-import { NotFoundError } from '../utils/app-error';
+} from '@/utils/task-helper';
+import { NotFoundError } from '@/utils/app-error';
 
 export class TaskService implements ITaskService {
   constructor(private taskRepo: ITaskRepository) {}

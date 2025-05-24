@@ -3,7 +3,7 @@ import {
   ProjectCreateInput,
   ProjectFilterInput,
   ProjectUpdateInput,
-} from '../models/project-model';
+} from '@/models/project-model';
 
 export interface IProjectRepository {
   findAllWithFilters(filters: ProjectFilterInput): Promise<Project[]>;

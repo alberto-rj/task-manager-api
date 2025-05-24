@@ -1,4 +1,4 @@
-import { IUserRepository } from '../repositories/i-user-repository';
+import { IUserRepository } from '@/interfaces/repositories/i-user-repository';
 import {
   SignupInput,
   SignupOutput,
@@ -7,15 +7,15 @@ import {
   toIUserPayload,
   RefreshTokenInput,
   RefreshTokenOutput,
-} from '../dtos/auth.dto';
-import { IAuthService } from './i-auth-service';
-import { IUserService } from './i-user-service';
-import { NotFoundError, UnauthorizedError } from '../utils/app-error';
-import { verifyPassword } from '../utils/password-security';
-import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
-import { toUserOutput } from '../dtos/user.dto';
-import { IRefreshTokenRepository } from '../repositories/i-refresh-token-repository';
-import { env } from '../config/env';
+} from '@/dtos/auth.dto';
+import { IAuthService } from '@/interfaces/services/i-auth-service';
+import { IUserService } from '@/interfaces/services/i-user-service';
+import { NotFoundError, UnauthorizedError } from '@/utils/app-error';
+import { verifyPassword } from '@/utils/password-security';
+import { generateAccessToken, generateRefreshToken } from '@/utils/jwt';
+import { toUserOutput } from '@/dtos/user.dto';
+import { IRefreshTokenRepository } from '@/interfaces/repositories/i-refresh-token-repository';
+import env from '@/config/env';
 
 export class AuthService implements IAuthService {
   private userRepo: IUserRepository;
@@ -34,7 +34,7 @@ export class AuthService implements IAuthService {
 
   private createRefreshTokenExpiry(): Date {
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + env.refreshTokenExpiresInDays);
+    expiresAt.setDate(expiresAt.getDate() + env.auth.refreshTokenExpiresInDays);
     return expiresAt;
   }
 

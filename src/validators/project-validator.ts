@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { validate } from '../utils/validate';
+import { validate } from '@/utils/validate';
 
 export const id = z
   .string({ message: 'Must be string' })

@@ -1,9 +1,9 @@
-import { IRefreshTokenRepository } from '../repositories/i-refresh-token-repository';
-import { IUserRepository } from '../repositories/i-user-repository';
-import { IUserService } from '../services/i-user-service';
-import { IServiceFactory } from '../services/i-service-factory';
+import { IRefreshTokenRepository } from '../interfaces/repositories/i-refresh-token-repository';
+import { IUserRepository } from '../interfaces/repositories/i-user-repository';
+import { IUserService } from '../interfaces/services/i-user-service';
+import { IServiceFactory } from '../interfaces/services/i-service-factory';
 import { ServiceFactory as ServiceFactoryImpl } from '../services/service-factory';
-import { IProjectRepository } from '../repositories/i-project-repository';
+import { IProjectRepository } from '../interfaces/repositories/i-project-repository';
 
 export class ServiceFactory {
   private constructor() {}

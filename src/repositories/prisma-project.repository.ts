@@ -1,11 +1,11 @@
-import { PrismaClient } from 'generated/prisma';
+import { PrismaClient } from '@/prisma';
 import {
   Project,
   ProjectCreateInput,
   ProjectFilterInput,
   ProjectUpdateInput,
-} from '../models/project-model';
-import { IProjectRepository } from './i-project-repository';
+} from '@/models/project-model';
+import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
 
 export class PrismaProjectRepository implements IProjectRepository {
   private prisma: PrismaClient;

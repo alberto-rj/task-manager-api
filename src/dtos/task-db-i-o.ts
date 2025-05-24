@@ -1,4 +1,4 @@
-import { TaskPriority, TaskStatus } from '../models/task-model';
+import { TaskPriority, TaskStatus } from '@/models/task-model';
 
 export type CreateTaskDbIO = {
   authorId: string;
