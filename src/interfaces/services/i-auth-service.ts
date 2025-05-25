@@ -1,18 +1,13 @@
-import {
-  RefreshTokenInput,
-  RefreshTokenOutput,
-  SigninInput,
-  SigninOutput,
-  SignupInput,
-  SignupOutput,
-} from '../../dtos/auth/auth.dto';
+import { AuthResponseDTO } from '@/dtos/auth/auth.output.dto';
+import { LoginBodyDTO } from '@/dtos/auth/auth.input.dto';
+import { CreateUserBodyDTO } from '@/dtos/user/user.input.dto';
 
 export interface IAuthService {
-  signin(data: SigninInput): Promise<SigninOutput>;
+  login(data: LoginBodyDTO): Promise<AuthResponseDTO>;
 
-  signup(data: SignupInput): Promise<SignupOutput>;
+  register(data: CreateUserBodyDTO): Promise<AuthResponseDTO>;
 
-  refreshToken(data: RefreshTokenInput): Promise<RefreshTokenOutput>;
+  refreshToken(token: string): Promise<AuthResponseDTO>;
 
-  logout(data: RefreshTokenInput): Promise<void>;
+  logout(refreshToken: string): Promise<void>;
 }

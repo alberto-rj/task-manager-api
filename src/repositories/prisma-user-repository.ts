@@ -1,7 +1,12 @@
-import { PrismaClient, User } from 'generated/prisma';
-
-import { CreateUserInput, UpdateUserInput } from '../dtos/user.dto';
-import { IUserRepository } from '../interfaces/repositories/i-user-repository';
+import { IUserRepository } from '@/interfaces/repositories/i-user-repository';
+import {
+  CreateUserBodyDTO,
+  UpdateUserDTO,
+  UserIdentifiersDTO,
+} from '@/dtos/user/user.input.dto';
+import { User } from '@/models/user.model';
+import { PrismaClient } from '@/prisma';
+import { hashPassword } from '@/utils/password-security';
 
 export class PrismaUserRepository implements IUserRepository {
   private prisma: PrismaClient;
@@ -34,10 +39,10 @@ export class PrismaUserRepository implements IUserRepository {
     });
   }
 
-  async findAllByEmailOrUsername(
-    email: string,
-    username: string,
-  ): Promise<User[]> {
+  async findAllWithSomeIdentifier({
+    email,
+    username,
+  }: UserIdentifiersDTO): Promise<User[]> {
     return this.prisma.user.findMany({
       where: {
         OR: [{ email }, { username }],
@@ -45,12 +50,23 @@ export class PrismaUserRepository implements IUserRepository {
     });
   }
 
-  async create(data: CreateUserInput): Promise<User> {
-    return this.prisma.user.create({ data });
+  async create(data: CreateUserBodyDTO): Promise<User> {
+    const hashedPassword = await hashPassword(data.password);
+    return this.prisma.user.create({
+      data: { ...data, password: hashedPassword },
+    });
   }
 
-  async update(id: string, data: UpdateUserInput): Promise<User> {
-    return this.prisma.user.update({ where: { id }, data });
+  async update(id: string, data: UpdateUserDTO): Promise<User> {
+    const newPassword =
+      typeof data.password === 'string'
+        ? await hashPassword(data.password)
+        : undefined;
+
+    return this.prisma.user.update({
+      data: { ...data, password: newPassword },
+      where: { id },
+    });
   }
 
   async delete(id: string): Promise<void> {

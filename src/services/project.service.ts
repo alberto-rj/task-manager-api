@@ -1,12 +1,13 @@
-import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
 import {
-  CreateProjectDTO,
-  UpdateProjectDTO,
-  ArchiveProjectDTO,
-  toProjectMinimalDTO,
-  ProjectMinimalDTO,
-  GetProjectsDTO,
-} from '@/dtos/project/project.dto';
+  CreateProjectBodyDTO,
+  ProjectQueryDTO,
+  UpdateProjectBodyDTO,
+} from '@/dtos/project/project.input';
+import {
+  ProjectResponseDTO,
+  toProjectResponseDTO,
+} from '@/dtos/project/project.output.dto';
+import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
 import { IProjectService } from '@/interfaces/services/i-project-service';
 import { IUserService } from '@/interfaces/services/i-user-service';
 import { ForbiddenError, NotFoundError } from '@/utils/app-error';
@@ -19,17 +20,17 @@ export class ProjectService implements IProjectService {
 
   async getAll(
     authorId: string,
-    dto: GetProjectsDTO,
-  ): Promise<ProjectMinimalDTO[]> {
-    const persistedProjects = await this.projectRepo.findAllWithFilters({
+    dto: ProjectQueryDTO,
+  ): Promise<ProjectResponseDTO[]> {
+    const persistedProjects = await this.projectRepo.findAllWithQuery({
       authorId,
-      includeArchived: dto.includeArchived,
+      includeArchived: dto.includeArchived || false,
     });
 
-    return persistedProjects.map(toProjectMinimalDTO);
+    return persistedProjects.map(toProjectResponseDTO);
   }
 
-  async getById(id: string, authorId: string): Promise<ProjectMinimalDTO> {
+  async getById(id: string, authorId: string): Promise<ProjectResponseDTO> {
     const persistedProject = await this.projectRepo.findById(id);
 
     if (!persistedProject) {
@@ -40,13 +41,13 @@ export class ProjectService implements IProjectService {
       throw new ForbiddenError(`Project access denied`);
     }
 
-    return toProjectMinimalDTO(persistedProject);
+    return toProjectResponseDTO(persistedProject);
   }
 
   async create(
     authorId: string,
-    dto: CreateProjectDTO,
-  ): Promise<ProjectMinimalDTO> {
+    dto: CreateProjectBodyDTO,
+  ): Promise<ProjectResponseDTO> {
     await this.service.getById(authorId);
 
     const createdProject = await this.projectRepo.create({
@@ -54,14 +55,14 @@ export class ProjectService implements IProjectService {
       authorId,
     });
 
-    return toProjectMinimalDTO(createdProject);
+    return toProjectResponseDTO(createdProject);
   }
 
   async update(
     id: string,
     authorId: string,
-    dto: UpdateProjectDTO,
-  ): Promise<ProjectMinimalDTO> {
+    dto: UpdateProjectBodyDTO,
+  ): Promise<ProjectResponseDTO> {
     await this.getById(id, authorId);
 
     const updatedProject = await this.projectRepo.update(id, {
@@ -69,7 +70,7 @@ export class ProjectService implements IProjectService {
       authorId,
     });
 
-    return toProjectMinimalDTO(updatedProject);
+    return toProjectResponseDTO(updatedProject);
   }
 
   async delete(authorId: string, id: string): Promise<void> {
@@ -81,12 +82,12 @@ export class ProjectService implements IProjectService {
   async archive(
     id: string,
     authorId: string,
-    dto: ArchiveProjectDTO,
-  ): Promise<ProjectMinimalDTO> {
+    isArchived: boolean,
+  ): Promise<ProjectResponseDTO> {
     await this.getById(id, authorId);
 
-    const updatedProject = await this.projectRepo.update(id, dto);
+    const updatedProject = await this.projectRepo.update(id, { isArchived });
 
-    return toProjectMinimalDTO(updatedProject);
+    return toProjectResponseDTO(updatedProject);
   }
 }

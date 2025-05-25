@@ -1,21 +1,15 @@
+import env from '@/config/env';
 import { IUserRepository } from '@/interfaces/repositories/i-user-repository';
-import {
-  SignupInput,
-  SignupOutput,
-  SigninInput,
-  SigninOutput,
-  toIUserPayload,
-  RefreshTokenInput,
-  RefreshTokenOutput,
-} from '@/dtos/auth/auth.dto';
+import { LoginBodyDTO } from '@/dtos/auth/auth.input.dto';
 import { IAuthService } from '@/interfaces/services/i-auth-service';
 import { IUserService } from '@/interfaces/services/i-user-service';
 import { NotFoundError, UnauthorizedError } from '@/utils/app-error';
 import { verifyPassword } from '@/utils/password-security';
 import { generateAccessToken, generateRefreshToken } from '@/utils/jwt';
-import { toUserOutput } from '@/dtos/user/user.dto';
 import { IRefreshTokenRepository } from '@/interfaces/repositories/i-refresh-token-repository';
-import env from '@/config/env';
+import { toUserResponseDTO } from '@/dtos/user/user.output.dto';
+import { AuthResponseDTO } from '@/dtos/auth/auth.output.dto';
+import { CreateUserBodyDTO } from '@/dtos/user/user.input.dto';
 
 export class AuthService implements IAuthService {
   private userRepo: IUserRepository;
@@ -51,72 +45,73 @@ export class AuthService implements IAuthService {
     return refreshToken;
   }
 
-  async refreshToken(data: RefreshTokenInput): Promise<RefreshTokenOutput> {
-    const persistedRefreshToken = await this.refreshTokenRepo.findByToken(
-      data.refreshToken,
-    );
+  async refreshToken(token: string): Promise<AuthResponseDTO> {
+    const persistedRefreshToken =
+      await this.refreshTokenRepo.findByToken(token);
 
     if (!persistedRefreshToken) {
       throw new UnauthorizedError('Invalid refresh token');
     }
 
     if (persistedRefreshToken.expiresAt < new Date()) {
-      await this.refreshTokenRepo.deleteByToken(data.refreshToken);
+      await this.refreshTokenRepo.deleteByToken(token);
       throw new UnauthorizedError('Refresh token expired');
     }
 
     const user = await this.userRepo.findById(persistedRefreshToken.userId);
 
     if (!user) {
-      await this.refreshTokenRepo.deleteByToken(data.refreshToken);
+      await this.refreshTokenRepo.deleteByToken(token);
       throw new NotFoundError('User not found');
     }
 
-    const accessToken = generateAccessToken(toIUserPayload(user));
+    const accessToken = generateAccessToken({ id: user.id });
 
-    await this.refreshTokenRepo.deleteByToken(data.refreshToken);
+    await this.refreshTokenRepo.deleteByToken(token);
     const newRefreshToken = await this.createNewRefreshToken(user.id);
 
     return {
       accessToken,
       refreshToken: newRefreshToken,
-      user: toUserOutput(user),
+      user: toUserResponseDTO(user),
     };
   }
 
-  async signin(data: SigninInput): Promise<SigninOutput> {
-    const filteredUser = await this.userRepo.findByIdentifier(data.identifier);
+  async login(data: LoginBodyDTO): Promise<AuthResponseDTO> {
+    const persistedUser = await this.userRepo.findByIdentifier(data.identifier);
 
     const error = new NotFoundError('Identifier or password do not match');
 
-    if (!filteredUser) {
+    if (!persistedUser) {
       throw error;
     }
 
     const hasVerifiedPassword = await verifyPassword(
       data.password,
-      filteredUser.password,
+      persistedUser.password,
     );
 
     if (!hasVerifiedPassword) {
       throw error;
     }
 
-    const userOutput = toUserOutput(filteredUser);
-    const accessToken = generateAccessToken(toIUserPayload(filteredUser));
-    const refreshToken = await this.createNewRefreshToken(filteredUser.id);
+    const refreshToken = await this.createNewRefreshToken(persistedUser.id);
+
+    await this.userRepo.update(persistedUser.id, { lastLoginAt: new Date() });
+
+    const accessToken = generateAccessToken({ id: persistedUser.id });
 
     return {
-      user: userOutput,
-      accessToken,
+      user: toUserResponseDTO(persistedUser),
       refreshToken,
+      accessToken,
     };
   }
 
-  async signup(data: SignupInput): Promise<SignupOutput> {
+  async register(data: CreateUserBodyDTO): Promise<AuthResponseDTO> {
     const createdUser = await this.userService.create(data);
 
-    const accessToken = generateAccessToken(toIUserPayload(createdUser));
+    const accessToken = generateAccessToken({ id: createdUser.id });
     const refreshToken = await this.createNewRefreshToken(createdUser.id);
 
     return {
@@ -126,7 +121,7 @@ export class AuthService implements IAuthService {
     };
   }
 
-  async logout(data: RefreshTokenInput): Promise<void> {
-    await this.refreshTokenRepo.deleteByToken(data.refreshToken);
+  async logout(refreshToken: string): Promise<void> {
+    await this.refreshTokenRepo.deleteByToken(refreshToken);
   }
 }

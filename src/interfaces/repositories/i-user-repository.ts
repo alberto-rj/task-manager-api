@@ -1,8 +1,14 @@
-import { CreateUserInput, UpdateUserInput } from '@/dtos/user/user.dto';
+import {
+  UserEntriesDTO,
+  UserChangesDTO,
+  UserIdentifiersDTO,
+} from '@/dtos/user/user.input.dto';
 import { User } from '@/models/user.model';
 
 export interface IUserRepository {
   findAll(): Promise<User[]>;
+
+  findAllWithSomeIdentifier(data: UserIdentifiersDTO): Promise<User[]>;
 
   findById(id: string): Promise<User | null>;
 
@@ -12,11 +18,9 @@ export interface IUserRepository {
 
   findByIdentifier(identifier: string): Promise<User | null>;
 
-  findAllByEmailOrUsername(email: string, username: string): Promise<User[]>;
+  create(data: UserEntriesDTO): Promise<User>;
 
-  create(data: CreateUserInput): Promise<User>;
-
-  update(id: string, data: UpdateUserInput): Promise<User>;
+  update(id: string, data: UserChangesDTO): Promise<User>;
 
   delete(id: string): Promise<void>;
 }

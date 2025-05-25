@@ -5,9 +5,9 @@ import { IProjectService } from '@/interfaces/services/i-project-service';
 import { IUserRepository } from '@/interfaces/repositories/i-user-repository';
 import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
 import { IRefreshTokenRepository } from '@/interfaces/repositories/i-refresh-token-repository';
-import { AuthService } from '@/services/auth-service';
-import { UserService } from '@/services/user-service';
-import { ProjectService } from '@/services/project-service';
+import { AuthService } from '@/services/auth.service';
+import { UserService } from '@/services/user.service';
+import { ProjectService } from '@/services/project.service';
 
 export class ServiceFactory implements IServiceFactory {
   newIAuthService(

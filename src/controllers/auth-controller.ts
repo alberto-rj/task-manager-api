@@ -1,13 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 
 import env from '@/config/env';
-import {
-  toRefreshTokenInput,
-  toSigninInput,
-  toSignupInput,
-} from '@/dtos/auth/auth.dto';
+import { toLoginDTO, toRefreshTokenDTO } from '@/dtos/auth/auth.input.dto';
 import { IAuthService } from '@/interfaces/services/i-auth-service';
 import { auth } from '@/utils/response-body';
+import { toCreateUserDTO } from '@/dtos/user/user.input.dto';
 
 export const newAuthController = (service: IAuthService) => {
   const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
@@ -19,10 +16,33 @@ export const newAuthController = (service: IAuthService) => {
     });
   };
 
+  const login = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { body } = toLoginDTO(req);
+
+      const output = await service.login(body);
+
+      setRefreshTokenCookie(res, output.refreshToken);
+
+      res.status(200).json(
+        auth<typeof output.user>({
+          accessToken: output.accessToken,
+          user: output.user,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   const logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const input = toRefreshTokenInput(req.cookies);
-      await service.logout(input);
+      const {
+        cookies: { refreshToken },
+      } = toRefreshTokenDTO(req);
+
+      await service.logout(refreshToken);
+
       res.clearCookie('refreshToken');
       res.status(204).send();
     } catch (error) {
@@ -36,27 +56,11 @@ export const newAuthController = (service: IAuthService) => {
     next: NextFunction,
   ) => {
     try {
-      const input = toRefreshTokenInput(req.cookies);
+      const {
+        cookies: { refreshToken },
+      } = toRefreshTokenDTO(req);
 
-      const output = await service.refreshToken(input);
-
-      setRefreshTokenCookie(res, output.refreshToken);
-
-      res.status(200).json(
-        auth<typeof output.user>({
-          accessToken: output.accessToken,
-          user: output.user,
-        }),
-      );
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  const signin = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const input = toSigninInput(req.body);
-      const output = await service.signin(input);
+      const output = await service.refreshToken(refreshToken);
 
       setRefreshTokenCookie(res, output.refreshToken);
 
@@ -71,10 +75,11 @@ export const newAuthController = (service: IAuthService) => {
     }
   };
 
-  const signup = async (req: Request, res: Response, next: NextFunction) => {
+  const register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const input = toSignupInput(req.body);
-      const output = await service.signup(input);
+      const { body } = toCreateUserDTO(req);
+
+      const output = await service.register(body);
 
       setRefreshTokenCookie(res, output.refreshToken);
 
@@ -90,9 +95,9 @@ export const newAuthController = (service: IAuthService) => {
   };
 
   return {
+    login,
     logout,
     refreshToken,
-    signin,
-    signup,
+    register,
   };
 };

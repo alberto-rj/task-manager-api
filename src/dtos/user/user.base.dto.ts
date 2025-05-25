@@ -84,8 +84,15 @@ export const password = z
       .build(),
   );
 
+export const isActive = z
+  .string({ required_error: 'Is active is required.' })
+  .refine((value) => value === 'true' || value === 'false', {
+    message: 'Is active must be either true or false.',
+  })
+  .transform((value) => value === 'true');
+
 export const bio = z
-  .string()
+  .string({ required_error: 'Bio is required.' })
   .max(200, { message: 'Bio cannot exceed 200 characters.' })
   .transform((value) =>
     create(value)
@@ -93,11 +100,10 @@ export const bio = z
       .removeControlChars()
       .escapeHTML()
       .build(),
-  )
-  .optional();
+  );
 
 export const avatar = z
-  .string()
+  .string({ required_error: 'Avatar is required.' })
   .refine((value) => validator.isURL(value), {
     message:
       'Avatar must be a valid URL (e.g., "https://example.com/avatar.png").',
@@ -108,8 +114,7 @@ export const avatar = z
       .removeControlChars()
       .escapeHTML()
       .build(),
-  )
-  .optional();
+  );
 
 const isValidTimezone = (timezone: string): boolean => {
   try {

@@ -1,18 +1,19 @@
 import {
-  Project,
-  ProjectCreateInput,
-  ProjectFilterInput,
-  ProjectUpdateInput,
-} from '@/models/project.model';
+  ProjectChangesDTO,
+  ProjectEntriesDTO,
+  ProjectQueryDTO,
+} from '@/dtos/project/project.input';
+
+import { Project } from '@/models/project.model';
 
 export interface IProjectRepository {
-  findAllWithFilters(filters: ProjectFilterInput): Promise<Project[]>;
+  findAllWithQuery(query: ProjectQueryDTO): Promise<Project[]>;
 
   findById(id: string): Promise<Project | null>;
 
-  create(data: ProjectCreateInput): Promise<Project>;
+  create(data: ProjectEntriesDTO): Promise<Project>;
 
-  update(id: string, data: ProjectUpdateInput): Promise<Project>;
+  update(id: string, data: ProjectChangesDTO): Promise<Project>;
 
   delete(id: string): Promise<void>;
 }
