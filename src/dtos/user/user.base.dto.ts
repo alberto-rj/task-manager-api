@@ -7,9 +7,9 @@ import { uuid } from '@/dtos/common/base.dto';
 export const id = uuid();
 
 export const firstName = z
-  .string({ required_error: 'First name is required.' })
-  .min(1, { message: 'First name cannot be empty.' })
-  .max(50, { message: 'First name cannot exceed 50 characters.' })
+  .string({ required_error: 'firstName is required.' })
+  .min(1, { message: 'firstName cannot be empty.' })
+  .max(50, { message: 'firstName cannot exceed 50 characters.' })
   .transform((value) =>
     create(value)
       .normalizeWhitespace()
@@ -19,9 +19,9 @@ export const firstName = z
   );
 
 export const lastName = z
-  .string({ required_error: 'Last name is required.' })
-  .min(1, { message: 'Last name cannot be empty.' })
-  .max(50, { message: 'Last name cannot exceed 50 characters.' })
+  .string({ required_error: 'lastName is required.' })
+  .min(1, { message: 'lastName cannot be empty.' })
+  .max(50, { message: 'lastName cannot exceed 50 characters.' })
   .transform((value) =>
     create(value)
       .normalizeWhitespace()
@@ -31,11 +31,11 @@ export const lastName = z
   );
 
 export const username = z
-  .string({ required_error: 'Username is required.' })
-  .min(3, { message: 'Username must be at least 3 characters.' })
-  .max(20, { message: 'Username cannot exceed 20 characters.' })
+  .string({ required_error: 'username is required.' })
+  .min(3, { message: 'username must be at least 3 characters.' })
+  .max(20, { message: 'username cannot exceed 20 characters.' })
   .refine((value) => validator.isAlphanumeric(value), {
-    message: 'Username must contain only alphanumeric characters (a-z, 0-9).',
+    message: 'username must contain only alphanumeric characters (a-z, 0-9).',
   })
   .transform((value) =>
     create(value)
@@ -47,10 +47,10 @@ export const username = z
   );
 
 export const email = z
-  .string({ required_error: 'Email is required.' })
-  .max(60, { message: 'Email cannot exceed 60 characters.' })
+  .string({ required_error: 'email is required.' })
+  .max(60, { message: 'email cannot exceed 60 characters.' })
   .email({
-    message: 'Email must be a valid address (e.g., "name@example.com").',
+    message: 'email must be a valid address (e.g., "name@example.com").',
   })
   .transform((value) =>
     create(value)
@@ -62,7 +62,7 @@ export const email = z
   );
 
 export const password = z
-  .string({ required_error: 'Password is required.' })
+  .string({ required_error: 'password is required.' })
   .refine(
     (value) =>
       validator.isStrongPassword(value, {
@@ -73,7 +73,7 @@ export const password = z
       }),
     {
       message:
-        'Password must have at least 8 characters, including 2 uppercase letters, 2 lowercase letters, 2 numbers, and 2 symbols.',
+        'password must have at least 8 characters, including 2 uppercase letters, 2 lowercase letters, 2 numbers, and 2 symbols.',
     },
   )
   .transform((value) =>
@@ -85,15 +85,15 @@ export const password = z
   );
 
 export const isActive = z
-  .string({ required_error: 'Is active is required.' })
+  .string({ required_error: 'isActive is required.' })
   .refine((value) => value === 'true' || value === 'false', {
-    message: 'Is active must be either true or false.',
+    message: 'isActive must be either true or false.',
   })
   .transform((value) => value === 'true');
 
 export const bio = z
-  .string({ required_error: 'Bio is required.' })
-  .max(200, { message: 'Bio cannot exceed 200 characters.' })
+  .string({ required_error: 'bio is required.' })
+  .max(200, { message: 'bio cannot exceed 200 characters.' })
   .transform((value) =>
     create(value)
       .normalizeWhitespace()
@@ -103,10 +103,10 @@ export const bio = z
   );
 
 export const avatar = z
-  .string({ required_error: 'Avatar is required.' })
+  .string({ required_error: 'avatar is required.' })
   .refine((value) => validator.isURL(value), {
     message:
-      'Avatar must be a valid URL (e.g., "https://example.com/avatar.png").',
+      'avatar must be a valid URL (e.g., "https://example.com/avatar.png").',
   })
   .transform((value) =>
     create(value)

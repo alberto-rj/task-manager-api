@@ -1,66 +1,102 @@
 import validator from 'validator';
 import { z } from 'zod';
-import { uuid } from '../common/base.dto';
 
-export const id = uuid('Project ID');
+import { uuid } from '@/dtos/common/base.dto';
+import { create } from '@/types/sanitize-string-builder';
+
+export const id = uuid('id');
 
 export const name = z
-  .string({ required_error: 'Name is required.' })
-  .min(3, { message: 'Must have at least 3 characters long.' })
-  .max(30, { message: 'Must have until 30 characters.' });
+  .string({ required_error: 'name is required.' })
+  .min(1, { message: 'name cannot be empty.' })
+  .max(100, { message: 'name cannot exceed 100 characters.' })
+  .transform((value) =>
+    create(value)
+      .normalizeWhitespace()
+      .removeControlChars()
+      .escapeHTML()
+      .build(),
+  );
 
 export const description = z
-  .string()
-  .min(3, { message: 'Must have at least 3 characters' })
-  .max(60, { message: 'Must have until 60 characters' });
+  .string({ required_error: 'description is required.' })
+  .max(500, { message: 'description must have until 500 characters.' })
+  .transform((value) =>
+    create(value)
+      .normalizeWhitespace()
+      .removeControlChars()
+      .escapeHTML()
+      .build(),
+  );
 
 export const coverImage = z
-  .string()
-  .refine((value) => validator.isURL(value), { message: 'Invalid URL' })
-  .optional();
+  .string({ required_error: 'coverImage is required.' })
+  .refine((value) => validator.isURL(value), {
+    message:
+      'coverImage must be a valid URL (e.g., "https://example.com/cover-image.png").',
+  })
+  .transform((value) =>
+    create(value)
+      .normalizeWhitespace()
+      .removeControlChars()
+      .escapeHTML()
+      .build(),
+  );
 
 export const startDate = z
-  .string()
-  .refine((value) => validator.isISO8601(value), {
-    message: 'Start date must be ISO Date',
+  .string({ required_error: 'startDate is required.' })
+  .refine((value) => validator.isISO8601(value, { strict: true }), {
+    message:
+      'endDate must be a valid ISO 8601 date (e.g., "2025-05-25T00:00:00Z").',
   })
   .refine((value) => validator.isAfter(value), {
-    message: 'Start date must be in the future.',
-  });
+    message: 'startDate must be in the future.',
+  })
+  .transform((value) => new Date(value));
 
 export const endDate = z
-  .string({ required_error: 'End date is required.' })
-  .refine((value) => validator.isISO8601(value), {
-    message: 'End date must be ISO Date',
+  .string({ required_error: 'endDate is required.' })
+  .refine((value) => validator.isISO8601(value, { strict: true }), {
+    message:
+      'endDate must be a valid ISO 8601 date (e.g., "2025-05-25T00:00:00Z").',
   })
   .refine((value) => validator.isAfter(value), {
-    message: 'End date must be in the future.',
+    message: 'endDate must be in the future.',
+  })
+  .transform((value) => new Date(value));
+
+export const duration = z
+  .object({
+    startDate,
+    endDate,
+  })
+  .refine(({ startDate, endDate }) => endDate >= startDate, {
+    message: 'endDate must be greater than or equal to startDate.',
+    path: ['endDate'],
   });
 
 export const isPublic = z
-  .string({ required_error: 'Public is required.' })
+  .string()
+  .default('false')
   .refine((value) => value === 'true' || value === 'false', {
-    message: 'Public can only be either true or false.',
-  })
-  .transform((value) => value == 'true');
-
-export const isArchived = z
-  .string({ required_error: 'is archived is required.' })
-  .refine((value) => value === 'true' || value === 'false', {
-    message: 'Must be either true or false',
+    message: 'isPublic must be "true" or "false".',
   })
   .transform((value) => value === 'true');
 
-export const authorId = id;
+export const isArchived = z
+  .string()
+  .default('false')
+  .refine((value) => value === 'true' || value === 'false', {
+    message: 'isArchived must be "true" or "false".',
+  })
+  .transform((value) => value === 'true');
 
-export const createdAt = z.date();
-
-export const updatedAt = z.date();
+export const authorId = uuid('authorId');
 
 export const includeArchived = z
-  .string()
+  .string({ required_error: 'includeArchived is required.' })
+  .default('false')
   .refine((value) => value === 'true' || value === 'false', {
-    message: 'Include archived must be either "true" or "false"',
+    message: 'includeArchived must be "true" or "false".',
   })
-  .transform((arg) => arg === 'true')
-  .optional();
+  .transform((arg) => arg === 'true');
