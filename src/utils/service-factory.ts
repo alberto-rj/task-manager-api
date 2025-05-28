@@ -2,7 +2,7 @@ import { IRefreshTokenRepository } from '../interfaces/repositories/i-refresh-to
 import { IUserRepository } from '../interfaces/repositories/i-user-repository';
 import { IUserService } from '../interfaces/services/i-user-service';
 import { IServiceFactory } from '../interfaces/services/i-service-factory';
-import { ServiceFactory as ServiceFactoryImpl } from '../services/service-factory';
+import { ServiceFactory as ServiceFactoryImpl } from '../services/service.factory';
 import { IProjectRepository } from '../interfaces/repositories/i-project-repository';
 
 export class ServiceFactory {

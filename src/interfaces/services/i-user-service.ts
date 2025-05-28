@@ -1,28 +1,27 @@
 import {
-  CreateUserInput,
-  UpdateUserInput,
-  UserOutput,
-} from '../../dtos/user.dto';
+  CreateUserBodyDTO,
+  UpdateUserBodyDTO,
+} from '@/dtos/user/user.input.dto';
+import { UserResponseDTO } from '@/dtos/user/user.output.dto';
 
 export interface IUserService {
-  getAll(): Promise<UserOutput[]>;
+  getAll(): Promise<UserResponseDTO[]>;
 
-  getById(id: string): Promise<UserOutput>;
+  getById(id: string): Promise<UserResponseDTO>;
 
-  getByEmail(email: string): Promise<UserOutput>;
+  getByEmail(email: string): Promise<UserResponseDTO>;
 
-  getByUsername(username: string): Promise<UserOutput>;
+  getByUsername(username: string): Promise<UserResponseDTO>;
 
-  getByIdentifier(username: string): Promise<UserOutput>;
+  getByIdentifier(identifier: string): Promise<UserResponseDTO>;
 
-  getAllByEmailOrUsername(
-    email: string,
-    username: string,
-  ): Promise<UserOutput[]>;
+  create(data: CreateUserBodyDTO): Promise<UserResponseDTO>;
 
-  create(data: CreateUserInput): Promise<UserOutput>;
+  update(id: string, data: UpdateUserBodyDTO): Promise<UserResponseDTO>;
 
-  updateById(id: string, data: UpdateUserInput): Promise<UserOutput>;
+  updateUsername(id: string, newUsername: string): Promise<UserResponseDTO>;
 
-  deleteById(id: string): Promise<void>;
+  updateEmail(id: string, newEmail: string): Promise<UserResponseDTO>;
+
+  delete(id: string): Promise<void>;
 }

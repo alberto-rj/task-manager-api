@@ -1,19 +1,19 @@
 import jwt from 'jsonwebtoken';
-
-import env from '@/config/env';
-import { IUserPayload } from '@/dtos/auth/auth.dto';
 import crypto from 'crypto';
 
-export function generateAccessToken(payload: IUserPayload) {
+import env from '@/config/env';
+import { IAuthPayload } from '@/types/i-auth-payload';
+
+export function generateAccessToken(payload: IAuthPayload) {
   return jwt.sign(payload, env.auth.jwtSecret, {
     expiresIn: env.auth.jwtExpiresIn,
   });
 }
 
-export function verifyToken(token: string): IUserPayload | null {
+export function verifyToken(token: string): IAuthPayload | null {
   try {
     const decoded = jwt.verify(token, env.auth.jwtSecret);
-    return decoded as IUserPayload;
+    return decoded as IAuthPayload;
   } catch (error) {
     return null;
   }

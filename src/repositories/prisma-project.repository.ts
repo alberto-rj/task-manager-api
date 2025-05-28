@@ -1,11 +1,11 @@
 import { PrismaClient } from '@/prisma';
-import {
-  Project,
-  ProjectCreateInput,
-  ProjectFilterInput,
-  ProjectUpdateInput,
-} from '@/models/project.model';
+import { Project } from '@/models/project.model';
 import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
+import {
+  ProjectChangesDTO,
+  ProjectEntriesDTO,
+  ProjectQueryDTO,
+} from '@/dtos/project/project.input';
 
 export class PrismaProjectRepository implements IProjectRepository {
   private prisma: PrismaClient;
@@ -14,27 +14,8 @@ export class PrismaProjectRepository implements IProjectRepository {
     this.prisma = prisma;
   }
 
-  async findAllWithPagination(
-    filters: ProjectFilterInput,
-    pagination: any,
-  ): Promise<void> {}
-
-  async findAllWithFilters({
-    authorId,
-    includeArchived,
-  }: ProjectFilterInput): Promise<Project[]> {
-    const query: Record<string, any> = { authorId };
-
-    if (!includeArchived) {
-      query.isArchived = false;
-    }
-
-    const persistedProjects = await this.prisma.project.findMany({
-      where: {
-        ...query,
-      },
-    });
-
+  async findAllWithQuery(query: ProjectQueryDTO): Promise<Project[]> {
+    const persistedProjects = await this.prisma.project.findMany({ take: 20 });
     return persistedProjects;
   }
 
@@ -54,13 +35,13 @@ export class PrismaProjectRepository implements IProjectRepository {
     return persistedProject;
   }
 
-  async create(data: ProjectCreateInput): Promise<Project> {
+  async create(data: ProjectEntriesDTO): Promise<Project> {
     return this.prisma.project.create({
       data,
     });
   }
 
-  async update(id: string, data: ProjectUpdateInput): Promise<Project> {
+  async update(id: string, data: ProjectChangesDTO): Promise<Project> {
     const updatedProject = await this.prisma.project.update({
       data,
       where: { id },

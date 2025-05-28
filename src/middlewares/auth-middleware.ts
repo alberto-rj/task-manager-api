@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express';
-import { IAuthRequest } from '@/dtos/auth/auth.dto';
+import { IAuthRequest } from '@/dtos/auth/auth.input.dto';
 import { ForbiddenError, UnauthorizedError } from '@/utils/app-error';
 import { verifyToken } from '@/utils/jwt';
 

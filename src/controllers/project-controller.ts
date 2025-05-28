@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 
-import { IAuthRequest, IUserPayload } from '@/dtos/auth/auth.dto';
+import { IAuthRequest, IUserPayload } from '@/dtos/auth/auth.input.dto';
 import { IProjectService } from '@/interfaces/services/i-project-service';
 import responseBody from '@/utils/response-body';
 import {
@@ -10,7 +10,7 @@ import {
   toGetProjectRIO,
   toGetProjectsRIO,
   toUpdateProjectRIO,
-} from '@/validators/project-validator';
+} from '@/dtos/project/project.input';
 
 export const newProjectController = (service: IProjectService) => {
   const getProjects = async (

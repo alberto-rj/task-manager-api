@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 
-import { IAuthRequest } from '@/dtos/auth/auth.dto';
+import { IAuthRequest } from '@/dtos/auth/auth.input.dto';
 
 export const newTaskController = () => {
   const createTask = async (

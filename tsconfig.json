@@ -32,7 +32,7 @@
       "@/prisma": ["generated/prisma"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/services/service.factory.ts"],
   "exclude": [
     "node_modules",
     "dist",

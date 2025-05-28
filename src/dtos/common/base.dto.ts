@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { create } from '@/types/sanitize-string-builder';
 
-export const uuid = (fieldName: string = 'ID') =>
+export const uuid = (fieldName: string = 'id') =>
   z
     .string({ required_error: `${fieldName} is required.` })
     .uuid({
@@ -16,13 +16,29 @@ export const uuid = (fieldName: string = 'ID') =>
         .build(),
     );
 
-export const page = z.coerce.number().int().min(1).default(1);
+export const page = z.coerce
+  .number({
+    message:
+      'page must be an integer number greater or equal to 1 (its default value is 1).',
+  })
+  .int()
+  .default(1);
 
-export const limit = z.coerce.number().int().min(1).max(100).default(20);
+export const limit = z.coerce
+  .number({
+    message:
+      'limit must be an integer number between 1 and 100 (its default value is 20).',
+  })
+  .int()
+  .min(1)
+  .max(100)
+  .default(20);
 
 export const sortBy = z.string().optional();
 
-export const sortOrder = z.enum(['asc', 'desc']).default('asc');
+export const sortOrder = z
+  .enum(['asc', 'desc'], { message: 'sortOrder must be "asc" or "desc"' })
+  .default('asc');
 
 export const createdAt = z.date();
 
@@ -32,14 +48,9 @@ export const uuidParamDTOSchema = z.object({
   id: uuid('id'),
 });
 
-export const paginationQueryDTOSchema = z.object({
+export const paginationQuerySchema = z.object({
   page,
   limit,
   sortBy,
   sortOrder,
-});
-
-export const timestampDTOSchema = z.object({
-  createdAt,
-  updatedAt,
 });

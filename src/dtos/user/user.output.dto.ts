@@ -1,6 +1,7 @@
 import { User } from '@/models/user.model';
 
 export type UserResponseDTO = {
+  id: string;
   firstName: string;
   lastName: string;
   username: string;
