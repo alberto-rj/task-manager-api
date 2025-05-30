@@ -30,7 +30,7 @@ export class UserService implements IUserService {
     const persistedUser = await this.repo.findById(id);
 
     if (!persistedUser) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('User not found.');
     }
 
     return toUserResponseDTO(persistedUser);
@@ -40,7 +40,7 @@ export class UserService implements IUserService {
     const persistedUser = await this.repo.findByEmail(email);
 
     if (!persistedUser) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('User not found.');
     }
 
     return toUserResponseDTO(persistedUser);
@@ -50,7 +50,7 @@ export class UserService implements IUserService {
     const persistedUser = await this.repo.findByUsername(username);
 
     if (!persistedUser) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('User not found.');
     }
 
     return toUserResponseDTO(persistedUser);

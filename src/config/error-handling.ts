@@ -1,16 +1,10 @@
-import { Request, Response, Express, NextFunction } from 'express';
+import { Express } from 'express';
 
 import { errorHandler } from '@/middlewares/error-handler-middleware';
-import { NotFoundError } from '@/utils/app-error';
+
+import { notFoundHandler } from '@/middlewares/not-found-handler';
 
 export const setupErrorHandling = (app: Express) => {
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    try {
-      throw new NotFoundError('Resource not found');
-    } catch (error) {
-      next(error);
-    }
-  });
-
+  app.use(notFoundHandler);
   app.use(errorHandler);
 };

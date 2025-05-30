@@ -47,12 +47,18 @@ export const updateEmail = z.object({
 });
 
 export const updateIsActive = z.object({
+  params: z.object({
+    id,
+  }),
   body: z.object({
     isActive,
   }),
 });
 
 export const updateRole = z.object({
+  params: z.object({
+    id,
+  }),
   body: z.object({
     role,
   }),

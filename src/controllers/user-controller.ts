@@ -100,11 +100,11 @@ export const newUserController = (service: IUserService) => {
   ) => {
     try {
       const {
+        params: { id },
         body: { role },
       } = toUpdateRoleDTO(req);
 
-      const userId = (req.user as IAuthPayload).id;
-      const output = await service.updateRole(userId, role);
+      const output = await service.updateRole(id, role);
 
       res
         .status(200)
@@ -121,11 +121,11 @@ export const newUserController = (service: IUserService) => {
   ) => {
     try {
       const {
+        params: { id },
         body: { isActive },
       } = toUpdateIsActiveDTO(req);
 
-      const userId = (req.user as IAuthPayload).id;
-      const output = await service.updateIsActive(userId, isActive);
+      const output = await service.updateIsActive(id, isActive);
 
       res
         .status(200)
@@ -135,17 +135,18 @@ export const newUserController = (service: IUserService) => {
     }
   };
 
-  const deleteProfile = async (
+  const inactive = async (
     req: IAuthRequest,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const userId = (req.user as IAuthPayload).id;
+      const output = await service.updateIsActive(userId, false);
 
-      await service.delete(userId);
-
-      res.status(204).send();
+      res
+        .status(200)
+        .json(responseBody.record<typeof output>({ resource: output }));
     } catch (error) {
       next(error);
     }
@@ -198,10 +199,10 @@ export const newUserController = (service: IUserService) => {
   };
 
   return {
-    deleteProfile,
     getAllByQuery,
     getById,
     getProfile,
+    inactive,
     updateEmail,
     updateIsActive,
     updateProfile,

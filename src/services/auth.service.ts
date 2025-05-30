@@ -81,9 +81,13 @@ export class AuthService implements IAuthService {
   async login(data: LoginBodyDTO): Promise<AuthResponseDTO> {
     const persistedUser = await this.userRepo.findByIdentifier(data.identifier);
 
-    const error = new NotFoundError('Identifier or password do not match');
+    const error = new NotFoundError('Identifier or password do not match.');
 
     if (!persistedUser) {
+      throw error;
+    }
+
+    if (!persistedUser.isActive) {
       throw error;
     }
 

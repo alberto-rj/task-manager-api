@@ -32,9 +32,9 @@ userRoutes.patch(
 );
 
 userRoutes.patch(
-  '/me/is-active',
+  '/me/inactive',
   authMiddleware.authenticate,
-  userController.updateIsActive,
+  userController.inactive,
 );
 
 userRoutes.get('/', authMiddleware.authenticate, userController.getAllByQuery);
@@ -42,14 +42,14 @@ userRoutes.get('/', authMiddleware.authenticate, userController.getAllByQuery);
 userRoutes.get('/:id', authMiddleware.authenticate, userController.getById);
 
 userRoutes.patch(
-  '/role',
+  '/:id/role',
   authMiddleware.authenticate,
   authMiddleware.authorize(['ADMIN']),
   userController.updateRole,
 );
 
 userRoutes.patch(
-  '/is-active',
+  '/:id/is-active',
   authMiddleware.authenticate,
   authMiddleware.authorize(['ADMIN']),
   userController.updateIsActive,
