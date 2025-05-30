@@ -1,6 +1,6 @@
 import { User } from '@/models/user.model';
 import { UserResult } from '@/types/user';
-import { ReadUsersQueryDTO } from './user.input.dto';
+import { ReadUsersQueryDTO } from '@/dtos/user/user.input.dto';
 
 export type UserResponseDTO = {
   id: string;
