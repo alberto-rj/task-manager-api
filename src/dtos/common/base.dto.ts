@@ -18,23 +18,21 @@ export const uuid = (fieldName: string = 'id') =>
 
 export const page = z.coerce
   .number({
-    message:
-      'page must be an integer number greater or equal to 1 (its default value is 1).',
+    required_error: 'page is required.',
+    invalid_type_error: 'page must be a number.',
   })
-  .int()
+  .int({ message: 'page must be an integer.' })
   .default(1);
 
 export const limit = z.coerce
   .number({
-    message:
-      'limit must be an integer number between 1 and 100 (its default value is 20).',
+    required_error: 'limit is required.',
+    invalid_type_error: 'limit must be number.',
   })
-  .int()
-  .min(1)
-  .max(100)
+  .int({ message: 'limit must be an integer.' })
+  .min(1, { message: 'limit must be at least 1.' })
+  .max(100, { message: 'limit must cannot exceed 100.' })
   .default(20);
-
-export const sortBy = z.string().optional();
 
 export const sortOrder = z
   .enum(['asc', 'desc'], { message: 'sortOrder must be "asc" or "desc"' })
@@ -51,6 +49,5 @@ export const uuidParamDTOSchema = z.object({
 export const paginationQuerySchema = z.object({
   page,
   limit,
-  sortBy,
   sortOrder,
 });

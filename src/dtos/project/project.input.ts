@@ -30,13 +30,21 @@ export const projectId = z.object({
 
 export const updateProjectSchema = z.object({
   params: projectId,
-  body: z.object({
-    name,
-    description: description.optional(),
-    coverImage: coverImage.optional(),
-    startDate: startDate.optional(),
-    endDate: endDate.optional(),
-  }),
+  body: z
+    .object({
+      name,
+      description: description.optional(),
+      coverImage: coverImage.optional(),
+      startDate: startDate.optional(),
+      endDate: endDate.optional(),
+    })
+    .refine(
+      ({ startDate, endDate }) => startDate && endDate && endDate >= startDate,
+      {
+        message: 'endDate must be greater than or equal to startDate.',
+        path: ['endDate'],
+      },
+    ),
 });
 
 export const deleteProjectDTOSchema = z.object({
@@ -88,8 +96,8 @@ export type ProjectChangesDTO = Partial<{
   name: string;
   description: string;
   coverImage: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   isPublic: boolean;
   isArchived: boolean;
   authorId: string;

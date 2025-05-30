@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
-import { IAuthRequest } from '@/dtos/auth/auth.input.dto';
 import { ForbiddenError, UnauthorizedError } from '@/utils/app-error';
 import { verifyToken } from '@/utils/jwt';
+import { IAuthRequest } from '@/types/i-auth-request';
 
 export const newAuthMiddleware = () => {
   const authenticate = async (

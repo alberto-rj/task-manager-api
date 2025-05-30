@@ -1,5 +1,6 @@
 import {
   CreateProjectBodyDTO,
+  ProjectChangesDTO,
   ProjectQueryDTO,
   UpdateProjectBodyDTO,
 } from '@/dtos/project/project.input';
@@ -65,10 +66,12 @@ export class ProjectService implements IProjectService {
   ): Promise<ProjectResponseDTO> {
     await this.getById(id, authorId);
 
-    const updatedProject = await this.projectRepo.update(id, {
+    const changes: ProjectChangesDTO = {
       ...dto,
       authorId,
-    });
+    };
+
+    const updatedProject = await this.projectRepo.update(id, changes);
 
     return toProjectResponseDTO(updatedProject);
   }

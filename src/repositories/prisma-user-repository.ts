@@ -1,7 +1,7 @@
 import { IUserRepository } from '@/interfaces/repositories/i-user-repository';
 import {
-  CreateUserBodyDTO,
-  UpdateUserDTO,
+  UserEntriesDTO,
+  UserChangesDTO,
   UserIdentifiersDTO,
 } from '@/dtos/user/user.input.dto';
 import { User } from '@/models/user.model';
@@ -50,14 +50,14 @@ export class PrismaUserRepository implements IUserRepository {
     });
   }
 
-  async create(data: CreateUserBodyDTO): Promise<User> {
+  async create(data: UserEntriesDTO): Promise<User> {
     const hashedPassword = await hashPassword(data.password);
     return this.prisma.user.create({
       data: { ...data, password: hashedPassword },
     });
   }
 
-  async update(id: string, data: UpdateUserDTO): Promise<User> {
+  async update(id: string, data: UserChangesDTO): Promise<User> {
     const newPassword =
       typeof data.password === 'string'
         ? await hashPassword(data.password)

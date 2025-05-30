@@ -86,6 +86,10 @@ export class AuthService implements IAuthService {
       throw error;
     }
 
+    if (!persistedUser.isActive) {
+      throw error;
+    }
+
     const hasVerifiedPassword = await verifyPassword(
       data.password,
       persistedUser.password,
@@ -97,12 +101,14 @@ export class AuthService implements IAuthService {
 
     const refreshToken = await this.createNewRefreshToken(persistedUser.id);
 
-    await this.userRepo.update(persistedUser.id, { lastLoginAt: new Date() });
+    const updatedUser = await this.userRepo.update(persistedUser.id, {
+      lastLoginAt: new Date(),
+    });
 
-    const accessToken = generateAccessToken({ id: persistedUser.id });
+    const accessToken = generateAccessToken({ id: updatedUser.id });
 
     return {
-      user: toUserResponseDTO(persistedUser),
+      user: toUserResponseDTO(updatedUser),
       refreshToken,
       accessToken,
     };

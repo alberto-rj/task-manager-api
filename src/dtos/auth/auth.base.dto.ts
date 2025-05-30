@@ -26,10 +26,10 @@ const isValidIdentifier = (input: string) => {
 };
 
 export const identifier = z
-  .string({ required_error: 'Identifier is required.' })
-  .min(1, { message: 'Identifier cannot be empty.' })
+  .string({ required_error: 'identifier is required.' })
+  .min(1, { message: 'identifier cannot be empty.' })
   .refine((value) => isValidIdentifier(value), {
-    message: 'Identifier must be either a valid email or email.',
+    message: 'identifier must be either a valid email or email.',
   })
   .transform((value) =>
     create(value)

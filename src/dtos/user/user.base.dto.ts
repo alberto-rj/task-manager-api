@@ -84,12 +84,10 @@ export const password = z
       .build(),
   );
 
-export const isActive = z
-  .string({ required_error: 'isActive is required.' })
-  .refine((value) => value === 'true' || value === 'false', {
-    message: 'isActive must be either true or false.',
-  })
-  .transform((value) => value === 'true');
+export const isActive = z.coerce.boolean({
+  required_error: 'isActive is required.',
+  invalid_type_error: 'isActive must be "true" or "false".',
+});
 
 export const bio = z
   .string({ required_error: 'bio is required.' })
@@ -103,7 +101,9 @@ export const bio = z
   );
 
 export const avatar = z
-  .string({ required_error: 'avatar is required.' })
+  .string({
+    required_error: 'avatar is required.',
+  })
   .refine((value) => validator.isURL(value), {
     message:
       'avatar must be a valid URL (e.g., "https://example.com/avatar.png").',

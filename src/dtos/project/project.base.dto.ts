@@ -65,16 +65,6 @@ export const endDate = z
   })
   .transform((value) => new Date(value));
 
-export const duration = z
-  .object({
-    startDate,
-    endDate,
-  })
-  .refine(({ startDate, endDate }) => endDate >= startDate, {
-    message: 'endDate must be greater than or equal to startDate.',
-    path: ['endDate'],
-  });
-
 export const isPublic = z
   .string()
   .default('false')
