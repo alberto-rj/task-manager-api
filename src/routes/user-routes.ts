@@ -19,6 +19,18 @@ userRoutes.patch(
   userController.updateProfile,
 );
 
+userRoutes.patch(
+  '/me/username',
+  authMiddleware.authenticate,
+  userController.updateUsername,
+);
+
+userRoutes.patch(
+  '/me/email',
+  authMiddleware.authenticate,
+  userController.updateEmail,
+);
+
 userRoutes.delete(
   '/me',
   authMiddleware.authenticate,

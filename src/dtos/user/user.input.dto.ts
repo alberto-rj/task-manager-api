@@ -115,11 +115,11 @@ export const toCreateUserDTO = (data: unknown): CreateUserDTO => {
 };
 
 export const toReadUserDTO = (data: unknown): ReadUserDTO => {
-  return validate<ReadUserDTO>(createUser, data);
+  return validate<ReadUserDTO>(readUser, data);
 };
 
 export const toReadUsersDTO = (data: unknown): ReadUsersDTO => {
-  return validate<ReadUsersDTO>(createUser, data);
+  return validate<ReadUsersDTO>(readUsers, data);
 };
 
 export const toUpdateUserDTO = (data: unknown): UpdateUserDTO => {
