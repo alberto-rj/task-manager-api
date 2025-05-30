@@ -2,7 +2,7 @@ import validator from 'validator';
 import { z } from 'zod';
 
 import { create } from '@/types/sanitize-string-builder';
-import { uuid } from '@/dtos/common/base.dto';
+import { uuid } from '@/dtos/common/common.base.dto';
 
 export const id = uuid();
 
@@ -178,30 +178,6 @@ export const orderBy = z
     },
   )
   .default('createdAt');
-
-export const sortOrder = z
-  .enum(['asc', 'desc'], {
-    invalid_type_error: 'sortOrder must be a string',
-    message: 'sortOrder must be "asc" or "desc".',
-  })
-  .default('desc');
-
-export const limit = z.coerce
-  .number({
-    invalid_type_error: 'limit must be a number.',
-  })
-  .int({ message: 'limit must be an integer.' })
-  .min(1, { message: 'limit must at least 1.' })
-  .max(60, { message: 'limit cannot exceed 60.' })
-  .default(20);
-
-export const page = z.coerce
-  .number({
-    invalid_type_error: 'page must be a number.',
-  })
-  .int({ message: 'page must be an integer.' })
-  .min(1, { message: 'page must be at least 1.' })
-  .default(1);
 
 export const includeMe = z
   .string()

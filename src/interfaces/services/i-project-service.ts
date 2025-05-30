@@ -1,29 +1,26 @@
 import {
-  ArchiveProjectDTO,
-  CreateProjectDTO,
-  GetProjectsDTO,
-  ProjectMinimalDTO,
-  UpdateProjectDTO,
+  ProjectCreateInput,
+  ProjectReadInput,
+  ProjectListInput,
+  ProjectUpdateInput,
+  ProjectDeleteInput,
+  ProjectUpdateIsArchivedInput,
+} from '@/dtos/project/project.input.dto';
+import {
+  ProjectOutput,
+  ProjectPaginationOutput,
 } from '@/dtos/project/project.output.dto';
 
 export interface IProjectService {
-  getAll(authorId: string, dto: GetProjectsDTO): Promise<ProjectMinimalDTO[]>;
+  create(input: ProjectCreateInput): Promise<ProjectOutput>;
 
-  getById(id: string, authorId: string): Promise<ProjectMinimalDTO>;
+  getById(input: ProjectReadInput): Promise<ProjectOutput>;
 
-  create(authorId: string, dto: CreateProjectDTO): Promise<ProjectMinimalDTO>;
+  getAll(query: ProjectListInput): Promise<ProjectPaginationOutput>;
 
-  update(
-    id: string,
-    authorId: string,
-    dto: UpdateProjectDTO,
-  ): Promise<ProjectMinimalDTO>;
+  update(input: ProjectUpdateInput): Promise<ProjectOutput>;
 
-  delete(id: string, authorId: string): Promise<void>;
+  updateIsArchived(input: ProjectUpdateIsArchivedInput): Promise<ProjectOutput>;
 
-  archive(
-    id: string,
-    authorId: string,
-    dto: ArchiveProjectDTO,
-  ): Promise<ProjectMinimalDTO>;
+  delete(input: ProjectDeleteInput): Promise<void>;
 }

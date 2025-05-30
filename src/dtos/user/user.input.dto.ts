@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { limit, page, sortOrder } from '@/dtos/common/common.base.dto';
 import {
   id,
   firstName,
@@ -12,9 +13,6 @@ import {
   timezone,
   search,
   orderBy,
-  sortOrder,
-  limit,
-  page,
   includeMe,
 } from '@/dtos/user/user.base.dto';
 import { validate } from '@/utils/validate';

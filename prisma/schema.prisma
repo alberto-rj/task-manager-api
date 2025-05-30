@@ -38,6 +38,7 @@ model Project {
   endDate DateTime?
   isPublic Boolean @default(false)
   isArchived Boolean @default(false)
+  archivedAt DateTime?
   authorId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
