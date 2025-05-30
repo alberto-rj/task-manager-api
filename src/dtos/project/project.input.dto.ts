@@ -1,19 +1,27 @@
 import { z } from 'zod';
 
-import { limit, page, search, sortOrder } from '@/dtos/common/common.base.dto';
+import {
+  isoDate,
+  limit,
+  page,
+  search,
+  sortOrder,
+} from '@/dtos/common/common.base.dto';
 import {
   id,
   name,
+  status,
+  priority,
   description,
   coverImage,
   startDate,
   endDate,
   isPublic,
   isArchived,
-  includeArchived,
   includePrivate,
   orderBy,
 } from '@/dtos/project/project.base.dto';
+import { ProjectStatus, ProjectPriority } from '@/models/project.model';
 import { validate } from '@/utils/validate';
 
 export const projectCreate = z.object({
@@ -41,6 +49,7 @@ export const projectUpdate = z.object({
     .object({
       name: name.optional(),
       description: description.optional(),
+      status,
       coverImage: coverImage.optional(),
       startDate: startDate.optional(),
       endDate: endDate.optional(),
@@ -71,9 +80,18 @@ export const projectRead = z.object({
 
 export const projectList = z.object({
   query: z.object({
+    name: name.optional(),
+    status,
+    priority,
+    startDateMin: isoDate('startDateMin').optional(),
+    startDateMax: isoDate('startDateMax').optional(),
+    endDateMin: isoDate('endDateMin').optional(),
+    endDateMax: isoDate('endDateMax').optional(),
+    createdAtMin: isoDate('createdAtMin').optional(),
+    createdAtMax: isoDate('createdAtMax').optional(),
+    updatedAtMin: isoDate('updatedAtMin').optional(),
+    updatedAtMax: isoDate('updatedAtMax').optional(),
     includePrivate,
-    includeArchived,
-    name: name.default(''),
     search,
     orderBy,
     sortOrder,
@@ -126,13 +144,15 @@ export type ProjectEntries = ProjectCreate['body'] & {
 
 export type ProjectChanges = Partial<{
   name: string;
+  status: ProjectStatus;
+  priority: ProjectPriority;
   description: string;
   coverImage: string;
   startDate: Date;
   endDate: Date;
   isPublic: boolean;
-  isArchived: boolean;
   archivedAt: Date | null;
+  completedAt: Date | null;
   authUserId: string;
 }>;
 

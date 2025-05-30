@@ -1,4 +1,4 @@
-import { User } from '@/models/user.model';
+import { User, UserRole } from '@/models/user.model';
 import { UserResult } from '@/types/user';
 import { UserQueryDTO } from '@/dtos/user/user.input.dto';
 
@@ -8,12 +8,14 @@ export type UserResponseDTO = {
   lastName: string;
   username: string;
   email: string;
-  timezone: string | undefined;
-  avatar: string | undefined;
-  bio: string | undefined;
   createdAt: string;
   updatedAt: string;
-};
+  role: UserRole;
+} & Partial<{
+  timezone: string;
+  avatar: string;
+  bio: string;
+}>;
 
 export type UserQueryResponseDTO = {
   users: UserResponseDTO[];

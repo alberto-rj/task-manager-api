@@ -1,2 +1,2 @@
-import { User } from '@/prisma';
-export { User };
+import { User, UserRole } from '@/prisma';
+export { User, UserRole };

@@ -65,7 +65,8 @@ export class AuthService implements IAuthService {
       throw new NotFoundError('User not found');
     }
 
-    const accessToken = generateAccessToken({ id: user.id });
+    const { id, role } = user;
+    const accessToken = generateAccessToken({ id, role });
 
     await this.refreshTokenRepo.deleteByToken(token);
     const newRefreshToken = await this.createNewRefreshToken(user.id);
@@ -97,7 +98,8 @@ export class AuthService implements IAuthService {
 
     const refreshToken = await this.createNewRefreshToken(persistedUser.id);
 
-    const accessToken = generateAccessToken({ id: persistedUser.id });
+    const { id, role } = persistedUser;
+    const accessToken = generateAccessToken({ id, role });
 
     return {
       user: toUserResponseDTO(persistedUser),
@@ -109,7 +111,8 @@ export class AuthService implements IAuthService {
   async register(data: CreateUserBodyDTO): Promise<AuthResponseDTO> {
     const createdUser = await this.userService.create(data);
 
-    const accessToken = generateAccessToken({ id: createdUser.id });
+    const { id, role } = createdUser;
+    const accessToken = generateAccessToken({ id, role });
     const refreshToken = await this.createNewRefreshToken(createdUser.id);
 
     return {

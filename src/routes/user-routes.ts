@@ -5,9 +5,9 @@ import { newAuthMiddleware } from '@/middlewares/auth-middleware';
 import { newIUserRepository } from '@/utils/repository-factory';
 import { newIUserService } from '@/utils/service-factory';
 
-const authMiddleware = newAuthMiddleware();
-
-const userController = newUserController(newIUserService(newIUserRepository()));
+const userService = newIUserService(newIUserRepository());
+const authMiddleware = newAuthMiddleware(userService);
+const userController = newUserController(userService);
 
 const userRoutes = Router();
 
@@ -31,14 +31,28 @@ userRoutes.patch(
   userController.updateEmail,
 );
 
-userRoutes.delete(
-  '/me',
+userRoutes.patch(
+  '/me/is-active',
   authMiddleware.authenticate,
-  userController.deleteProfile,
+  userController.updateIsActive,
 );
 
 userRoutes.get('/', authMiddleware.authenticate, userController.getAllByQuery);
 
 userRoutes.get('/:id', authMiddleware.authenticate, userController.getById);
+
+userRoutes.patch(
+  '/role',
+  authMiddleware.authenticate,
+  authMiddleware.authorize(['ADMIN']),
+  userController.updateRole,
+);
+
+userRoutes.patch(
+  '/is-active',
+  authMiddleware.authenticate,
+  authMiddleware.authorize(['ADMIN']),
+  userController.updateIsActive,
+);
 
 export { userRoutes };

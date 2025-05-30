@@ -2,7 +2,8 @@ import validator from 'validator';
 import { z } from 'zod';
 
 import { create } from '@/types/sanitize-string-builder';
-import { uuid } from '@/dtos/common/common.base.dto';
+import { defaultFalse, defaultTrue, uuid } from '@/dtos/common/common.base.dto';
+import { UserRole } from '@/prisma';
 
 export const id = uuid();
 
@@ -72,6 +73,12 @@ export const email = z
       .toLowerCase()
       .build(),
   );
+
+export const role = z
+  .enum([UserRole.ADMIN, UserRole.USER], {
+    required_error: 'role must be only "ADMIN" or "USER".',
+  })
+  .default('USER');
 
 export const password = z
   .string({
@@ -179,10 +186,6 @@ export const orderBy = z
   )
   .default('createdAt');
 
-export const includeMe = z
-  .string()
-  .default('false')
-  .refine((value) => value === 'true' || value === 'false', {
-    message: 'includeMe must be "true" or "false".',
-  })
-  .transform((value) => value === 'true');
+export const includeMe = defaultFalse('includeMe');
+
+export const isActive = defaultTrue('isActive');

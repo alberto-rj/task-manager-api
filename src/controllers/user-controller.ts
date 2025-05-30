@@ -8,6 +8,8 @@ import {
   toReadUserDTO,
   toReadUsersDTO,
   toUpdateEmailDTO,
+  toUpdateIsActiveDTO,
+  toUpdateRoleDTO,
   toUpdateUserDTO,
   toUpdateUsernameDTO,
 } from '@/dtos/user/user.input.dto';
@@ -91,6 +93,48 @@ export const newUserController = (service: IUserService) => {
     }
   };
 
+  const updateRole = async (
+    req: IAuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const {
+        body: { role },
+      } = toUpdateRoleDTO(req);
+
+      const userId = (req.user as IAuthPayload).id;
+      const output = await service.updateRole(userId, role);
+
+      res
+        .status(200)
+        .json(responseBody.record<typeof output>({ resource: output }));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  const updateIsActive = async (
+    req: IAuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const {
+        body: { isActive },
+      } = toUpdateIsActiveDTO(req);
+
+      const userId = (req.user as IAuthPayload).id;
+      const output = await service.updateIsActive(userId, isActive);
+
+      res
+        .status(200)
+        .json(responseBody.record<typeof output>({ resource: output }));
+    } catch (error) {
+      next(error);
+    }
+  };
+
   const deleteProfile = async (
     req: IAuthRequest,
     res: Response,
@@ -158,8 +202,10 @@ export const newUserController = (service: IUserService) => {
     getAllByQuery,
     getById,
     getProfile,
-    updateProfile,
     updateEmail,
+    updateIsActive,
+    updateProfile,
+    updateRole,
     updateUsername,
   };
 };

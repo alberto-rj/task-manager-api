@@ -17,9 +17,18 @@ export class PrismaProjectRepository implements IProjectRepository {
 
   async findAll({
     name,
+    status,
+    priority,
+    startDateMin,
+    startDateMax,
+    endDateMin,
+    endDateMax,
+    createdAtMin,
+    createdAtMax,
+    updatedAtMin,
+    updatedAtMax,
     search,
     authUserId,
-    includeArchived,
     includePrivate,
     orderBy: sort,
     sortOrder,
@@ -28,20 +37,36 @@ export class PrismaProjectRepository implements IProjectRepository {
   }: ProjectListInput): Promise<ProjectListOutput> {
     const take = limit;
     const skip = limit * page;
-    const isArchived = includeArchived ? undefined : false;
     const isPublic = includePrivate ? undefined : true;
     const authorId = authUserId;
 
     const [total, persistedProjects] = await Promise.all([
       this.prisma.project.count({
-        where: { isPublic, isArchived, authorId },
+        where: { isPublic, authorId },
       }),
       this.prisma.project.findMany({
         where: {
           name,
+          status,
+          priority,
           isPublic,
-          isArchived,
           authorId,
+          startDate: {
+            gte: startDateMin,
+            lte: startDateMax,
+          },
+          endDate: {
+            gte: endDateMin,
+            lte: endDateMax,
+          },
+          createdAt: {
+            gte: createdAtMin,
+            lte: createdAtMax,
+          },
+          updatedAt: {
+            gte: updatedAtMin,
+            lte: updatedAtMax,
+          },
           OR: [
             {
               name: {

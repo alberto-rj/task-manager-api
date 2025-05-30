@@ -6,6 +6,7 @@ import {
   isoFutureDate,
   uuid,
 } from '@/dtos/common/common.base.dto';
+import { ProjectPriority, ProjectStatus } from '@/models/project.model';
 import { create } from '@/types/sanitize-string-builder';
 
 export const id = uuid('id');
@@ -38,6 +39,25 @@ export const description = z
       .escapeHTML()
       .build(),
   );
+
+export const status = z
+  .enum(
+    [ProjectStatus.ACTIVE, ProjectStatus.ARCHIVED, ProjectStatus.COMPLETED],
+    { message: 'status must be valid.' },
+  )
+  .default(ProjectStatus.ACTIVE);
+
+export const priority = z
+  .enum(
+    [
+      ProjectPriority.LOW,
+      ProjectPriority.MEDIUM,
+      ProjectPriority.HIGH,
+      ProjectPriority.URGENT,
+    ],
+    { message: 'priority must be valid.' },
+  )
+  .default(ProjectPriority.MEDIUM);
 
 export const coverImage = imageURL('coverImage', 'cover-image');
 

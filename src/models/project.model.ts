@@ -1,3 +1,3 @@
-import { Project } from '@/prisma';
+import { Project, ProjectPriority, ProjectStatus } from '@/prisma';
 
-export { Project };
+export { Project, ProjectPriority, ProjectStatus };

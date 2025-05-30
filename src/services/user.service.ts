@@ -16,6 +16,7 @@ import {
   UserQueryDTO,
   UpdateUserBodyDTO,
 } from '@/dtos/user/user.input.dto';
+import { UserRole } from '@/models/user.model';
 
 export class UserService implements IUserService {
   constructor(private repo: IUserRepository) {}
@@ -147,16 +148,26 @@ export class UserService implements IUserService {
     return toUserResponseDTO(updatedUser);
   }
 
-  async update(id: string, data: UpdateUserBodyDTO): Promise<UserResponseDTO> {
-    await this.getById(id);
+  async updateRole(id: string, newRole: UserRole): Promise<UserResponseDTO> {
+    const updatedUser = await this.repo.update(id, { role: newRole });
+    return toUserResponseDTO(updatedUser);
+  }
 
+  async updateIsActive(
+    id: string,
+    isActive: boolean,
+  ): Promise<UserResponseDTO> {
+    const updatedUser = await this.repo.update(id, { isActive });
+    return toUserResponseDTO(updatedUser);
+  }
+
+  async update(id: string, data: UpdateUserBodyDTO): Promise<UserResponseDTO> {
     const updatedUser = await this.repo.update(id, data);
 
     return toUserResponseDTO(updatedUser);
   }
 
   async delete(id: string): Promise<void> {
-    await this.getById(id);
     await this.repo.delete(id);
   }
 }
