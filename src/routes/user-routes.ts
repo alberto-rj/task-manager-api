@@ -37,8 +37,8 @@ userRoutes.delete(
   userController.deleteProfile,
 );
 
-userRoutes.get('/:id', authMiddleware.authenticate, userController.getById);
-
 userRoutes.get('/', authMiddleware.authenticate, userController.getAllByQuery);
+
+userRoutes.get('/:id', authMiddleware.authenticate, userController.getById);
 
 export { userRoutes };

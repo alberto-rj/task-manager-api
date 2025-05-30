@@ -13,14 +13,14 @@ import {
 } from '@/dtos/user/user.output.dto';
 import {
   CreateUserBodyDTO,
-  ReadUsersQueryDTO,
+  UserQueryDTO,
   UpdateUserBodyDTO,
 } from '@/dtos/user/user.input.dto';
 
 export class UserService implements IUserService {
   constructor(private repo: IUserRepository) {}
 
-  async getAllByQuery(query: ReadUsersQueryDTO): Promise<UserQueryResponseDTO> {
+  async getAllByQuery(query: UserQueryDTO): Promise<UserQueryResponseDTO> {
     const result = await this.repo.findAllByQuery(query);
     return toUserQueryResponseDTO(result, query);
   }

@@ -37,6 +37,7 @@ export const newUserController = (service: IUserService) => {
   ) => {
     try {
       const { body } = toUpdateUserDTO(req);
+
       const userId = (req.user as IAuthPayload).id;
       const output = await service.update(userId, body);
 
@@ -97,6 +98,7 @@ export const newUserController = (service: IUserService) => {
   ) => {
     try {
       const userId = (req.user as IAuthPayload).id;
+
       await service.delete(userId);
 
       res.status(204).send();
@@ -114,6 +116,7 @@ export const newUserController = (service: IUserService) => {
       const {
         params: { id },
       } = toReadUserDTO(req);
+
       const output = await service.getById(id);
 
       res
@@ -131,12 +134,18 @@ export const newUserController = (service: IUserService) => {
   ) => {
     try {
       const { query } = toReadUsersDTO(req);
-      const output = await service.getAllByQuery(query);
+
+      const userId = (req.user as IAuthPayload).id;
+
+      const { users, ...meta } = await service.getAllByQuery({
+        ...query,
+        id: userId,
+      });
 
       res.status(200).json(
-        responseBody.paginated<typeof output.users>({
-          ...output,
-          resources: output.users,
+        responseBody.paginated<typeof users>({
+          resources: users,
+          ...meta,
         }),
       );
     } catch (error) {

@@ -1,6 +1,6 @@
 import { User } from '@/models/user.model';
 import { UserResult } from '@/types/user';
-import { ReadUsersQueryDTO } from '@/dtos/user/user.input.dto';
+import { UserQueryDTO } from '@/dtos/user/user.input.dto';
 
 export type UserResponseDTO = {
   id: string;
@@ -40,7 +40,7 @@ export function toUserResponseDTO(user: User): UserResponseDTO {
 
 export function toUserQueryResponseDTO(
   { users, total }: UserResult,
-  { limit, page }: ReadUsersQueryDTO,
+  { limit, page }: UserQueryDTO,
 ): UserQueryResponseDTO {
   const newUsers = users.map(toUserResponseDTO);
 

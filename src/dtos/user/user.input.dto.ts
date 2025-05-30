@@ -15,6 +15,7 @@ import {
   sortOrder,
   limit,
   page,
+  includeMe,
 } from '@/dtos/user/user.base.dto';
 import { validate } from '@/utils/validate';
 
@@ -40,7 +41,7 @@ export const updateUser = z.object({
 
 export const updateEmail = z.object({
   body: z.object({
-    email,
+    email: email,
   }),
 });
 
@@ -69,6 +70,7 @@ export const readUsers = z.object({
     sortOrder,
     page,
     limit,
+    includeMe,
   }),
 });
 
@@ -108,7 +110,7 @@ export type CreateUserBodyDTO = CreateUserDTO['body'];
 
 export type UpdateUserBodyDTO = UpdateUserDTO['body'];
 
-export type ReadUsersQueryDTO = ReadUsersDTO['query'];
+export type UserQueryDTO = { id: string } & ReadUsersDTO['query'];
 
 export const toCreateUserDTO = (data: unknown): CreateUserDTO => {
   return validate<CreateUserDTO>(createUser, data);
@@ -127,10 +129,10 @@ export const toUpdateUserDTO = (data: unknown): UpdateUserDTO => {
 };
 
 export const toUpdateUsernameDTO = (data: unknown): UpdateUsernameDTO => {
-  return validate<UpdateUsernameDTO>(updateUser, data);
+  return validate<UpdateUsernameDTO>(updateUsername, data);
 };
 export const toUpdateEmailDTO = (data: unknown): UpdateEmailDTO => {
-  return validate<UpdateEmailDTO>(updateUser, data);
+  return validate<UpdateEmailDTO>(updateEmail, data);
 };
 
 export const toUpdatePasswordDTO = (data: unknown): UpdatePasswordDTO => {

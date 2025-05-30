@@ -3,7 +3,7 @@ import {
   UserEntriesDTO,
   UserChangesDTO,
   UserIdentifiersDTO,
-  ReadUsersQueryDTO,
+  UserQueryDTO,
 } from '@/dtos/user/user.input.dto';
 import { User } from '@/models/user.model';
 import { PrismaClient } from '@/prisma';
@@ -17,51 +17,12 @@ export class PrismaUserRepository implements IUserRepository {
     this.prisma = prisma;
   }
 
-  async findAllByQuery({
-    search,
-    orderBy: sort,
-    sortOrder: sortOrder,
-    limit,
-    page,
-  }: ReadUsersQueryDTO): Promise<UserResult> {
-    const total = await this.prisma.user.count();
-    const users = await this.prisma.user.findMany({
-      where: {
-        OR: [
-          {
-            firstName: {
-              mode: 'insensitive',
-              contains: search,
-            },
-          },
-          {
-            lastName: {
-              mode: 'insensitive',
-              contains: search,
-            },
-          },
-          {
-            username: {
-              mode: 'insensitive',
-              contains: search,
-            },
-          },
-          {
-            email: {
-              mode: 'insensitive',
-              contains: search,
-            },
-          },
-        ],
-      },
-      orderBy: {
-        [sort]: [sortOrder],
-      },
-      take: limit,
-      skip: limit * (page - 1),
-    });
+  async findAllByQuery(query: UserQueryDTO): Promise<UserResult> {
+    const result = query.includeMe
+      ? this.findAllByQueryIncludeMe(query)
+      : this.findAllByQueryExcludeMe(query);
 
-    return { total, users };
+    return result;
   }
 
   async findById(id: string): Promise<User | null> {
@@ -116,5 +77,111 @@ export class PrismaUserRepository implements IUserRepository {
 
   async delete(id: string): Promise<void> {
     this.prisma.user.delete({ where: { id } });
+  }
+
+  private async findAllByQueryIncludeMe({
+    search,
+    orderBy: sort,
+    sortOrder: sortOrder,
+    limit,
+    page,
+  }: UserQueryDTO): Promise<UserResult> {
+    const total = await this.prisma.user.count();
+    const users = await this.prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            firstName: {
+              mode: 'insensitive',
+              contains: search,
+            },
+          },
+          {
+            lastName: {
+              mode: 'insensitive',
+              contains: search,
+            },
+          },
+          {
+            username: {
+              mode: 'insensitive',
+              contains: search,
+            },
+          },
+          {
+            email: {
+              mode: 'insensitive',
+              contains: search,
+            },
+          },
+        ],
+      },
+      orderBy: {
+        [sort]: sortOrder,
+      },
+      take: limit,
+      skip: limit * (page - 1),
+    });
+    return { total, users };
+  }
+
+  async findAllByQueryExcludeMe({
+    id,
+    search,
+    orderBy: sort,
+    sortOrder: sortOrder,
+    limit,
+    page,
+  }: UserQueryDTO): Promise<UserResult> {
+    const total = await this.prisma.user.count();
+    const users = await this.prisma.user.findMany({
+      where: {
+        AND: [
+          {
+            id: {
+              not: id,
+            },
+          },
+          {
+            OR: [
+              {
+                firstName: {
+                  mode: 'insensitive',
+                  contains: search,
+                },
+              },
+              {
+                lastName: {
+                  mode: 'insensitive',
+                  contains: search,
+                },
+              },
+              {
+                username: {
+                  mode: 'insensitive',
+                  contains: search,
+                },
+              },
+              {
+                email: {
+                  mode: 'insensitive',
+                  contains: search,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      orderBy: {
+        [sort]: sortOrder,
+      },
+      take: limit,
+      skip: limit * (page - 1),
+    });
+
+    return {
+      total: total > 0 ? total - 1 : total,
+      users,
+    };
   }
 }

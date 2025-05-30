@@ -1,6 +1,6 @@
 import {
   CreateUserBodyDTO,
-  ReadUsersQueryDTO,
+  UserQueryDTO,
   UpdateUserBodyDTO,
 } from '@/dtos/user/user.input.dto';
 import {
@@ -9,7 +9,7 @@ import {
 } from '@/dtos/user/user.output.dto';
 
 export interface IUserService {
-  getAllByQuery(query: ReadUsersQueryDTO): Promise<UserQueryResponseDTO>;
+  getAllByQuery(query: UserQueryDTO): Promise<UserQueryResponseDTO>;
 
   getById(id: string): Promise<UserResponseDTO>;
 
