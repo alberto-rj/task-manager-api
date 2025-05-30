@@ -1,6 +1,6 @@
-import { PrismaClient, RefreshToken } from '@/prisma';
-
 import { IRefreshTokenRepository } from '@/interfaces/repositories/i-refresh-token-repository';
+import { RefreshToken } from '@/models/refresh-token.model';
+import { PrismaClient } from '@/prisma';
 
 export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
   private prisma: PrismaClient;
@@ -27,5 +27,11 @@ export class PrismaRefreshTokenRepository implements IRefreshTokenRepository {
 
   async deleteAllById(userId: string): Promise<void> {
     await this.prisma.refreshToken.deleteMany({ where: { userId } });
+  }
+
+  async deleteAllExpired(): Promise<void> {
+    await this.prisma.refreshToken.deleteMany({
+      where: { expiresAt: { lte: new Date() } },
+    });
   }
 }

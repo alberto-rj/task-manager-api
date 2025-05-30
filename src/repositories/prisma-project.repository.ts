@@ -32,37 +32,38 @@ export class PrismaProjectRepository implements IProjectRepository {
     const isPublic = includePrivate ? undefined : true;
     const authorId = authUserId;
 
-    const total = await this.prisma.project.count({
-      where: { isPublic, isArchived, authorId },
-    });
-
-    const persistedProjects = await this.prisma.project.findMany({
-      where: {
-        name,
-        isPublic,
-        isArchived,
-        authorId,
-        OR: [
-          {
-            name: {
-              contains: search,
-              mode: 'insensitive',
+    const [total, persistedProjects] = await Promise.all([
+      this.prisma.project.count({
+        where: { isPublic, isArchived, authorId },
+      }),
+      this.prisma.project.findMany({
+        where: {
+          name,
+          isPublic,
+          isArchived,
+          authorId,
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: 'insensitive',
+              },
             },
-          },
-          {
-            description: {
-              contains: search,
-              mode: 'insensitive',
+            {
+              description: {
+                contains: search,
+                mode: 'insensitive',
+              },
             },
-          },
-        ],
-      },
-      take,
-      skip,
-      orderBy: {
-        [sort]: sortOrder,
-      },
-    });
+          ],
+        },
+        take,
+        skip,
+        orderBy: {
+          [sort]: sortOrder,
+        },
+      }),
+    ]);
 
     return { total, resources: persistedProjects };
   }

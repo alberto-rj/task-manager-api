@@ -12,4 +12,6 @@ export interface IRefreshTokenRepository {
   deleteByToken(token: string): Promise<void>;
 
   deleteAllById(userId: string): Promise<void>;
+
+  deleteAllExpired(): Promise<void>;
 }

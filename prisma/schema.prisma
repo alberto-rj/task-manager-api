@@ -18,6 +18,8 @@ model User {
   timezone String?
   bio String?
   avatar String?
+  role UserRole @default(USER)
+  isActive Boolean @default(true)
   createdAt DateTime  @default(now())
   updatedAt DateTime @updatedAt
 
@@ -29,6 +31,11 @@ model User {
   refreshTokens RefreshToken[]
 }
 
+enum UserRole {
+  ADMIN 
+  USER 
+}
+
 model Project {
   id String @id @default(uuid())
   name String
@@ -37,9 +44,11 @@ model Project {
   startDate DateTime?
   endDate DateTime?
   isPublic Boolean @default(false)
-  isArchived Boolean @default(false)
-  archivedAt DateTime?
+  status ProjectStatus @default(ACTIVE)
+  priority ProjectPriority @default(MEDIUM)
   authorId String
+  completedAt DateTime?
+  archivedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -49,10 +58,23 @@ model Project {
   tasks Task[]
 }
 
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum ProjectPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
 model ProjectMember {
   id String @id @default(uuid())
-  projectId String
-  memberId String
+  projectId String @unique
+  memberId String @unique
   role ProjectMemberRole @default(VIEWER)
   inviteStatus ProjectMemberInviteStatus @default(PENDING)
   invitedAt DateTime
@@ -88,6 +110,7 @@ model Task {
   dueDate DateTime?
   completedAt DateTime?
   isArchived Boolean @default(false)
+  archivedAt DateTime?
   authorId String
   projectId String
   assignedToId String?
