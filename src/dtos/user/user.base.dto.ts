@@ -143,7 +143,8 @@ export const search = z
       .removeControlChars()
       .escapeHTML()
       .build(),
-  );
+  )
+  .default('');
 
 export const orderBy = z
   .enum(
@@ -158,11 +159,11 @@ export const orderBy = z
     ],
     { message: 'orderBy must be valid.' },
   )
-  .default('updatedAt');
+  .default('createdAt');
 
 export const sortOrder = z
   .enum(['asc', 'desc'], { message: 'sortOrder must be "asc" or "desc".' })
-  .default('asc');
+  .default('desc');
 
 export const limit = z.coerce
   .number({
@@ -170,7 +171,7 @@ export const limit = z.coerce
     required_error: 'limit is required.',
   })
   .int({ message: 'limit must be an integer.' })
-  .min(0, { message: 'limit must at least 0.' })
+  .min(1, { message: 'limit must at least 1.' })
   .max(60, { message: 'limit cannot exceed 60.' })
   .default(20);
 
@@ -181,4 +182,4 @@ export const page = z.coerce
   })
   .int({ message: 'page must be an integer.' })
   .min(1, { message: 'page must at least 1.' })
-  .default(20);
+  .default(1);
