@@ -58,7 +58,7 @@ export class PrismaUserRepository implements IUserRepository {
         [sort]: [sortOrder],
       },
       take: limit,
-      skip: limit * page,
+      skip: limit * (page - 1),
     });
 
     return { total, users };

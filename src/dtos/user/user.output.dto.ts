@@ -51,6 +51,6 @@ export function toUserQueryResponseDTO(
     page,
     pages: Math.ceil(total / limit),
     hasPrev: page > 1,
-    hasNext: page * limit < total,
+    hasNext: total > limit * (page - 1),
   };
 }

@@ -84,11 +84,6 @@ export const password = z
       .build(),
   );
 
-export const isActive = z.coerce.boolean({
-  required_error: 'isActive is required.',
-  invalid_type_error: 'isActive must be "true" or "false".',
-});
-
 export const bio = z
   .string({ required_error: 'bio is required.' })
   .max(200, { message: 'bio cannot exceed 200 characters.' })
@@ -151,25 +146,23 @@ export const search = z
   );
 
 export const orderBy = z
-  .enum([
-    'firstName',
-    'lastName',
-    'username',
-    'email',
-    'createdAt',
-    'updatedAt',
-    'timezone',
-  ])
+  .enum(
+    [
+      'firstName',
+      'lastName',
+      'username',
+      'email',
+      'createdAt',
+      'updatedAt',
+      'timezone',
+    ],
+    { message: 'orderBy must be valid.' },
+  )
   .default('updatedAt');
 
-export const sortOrder = z.enum(['asc', 'desc']).default('asc');
-
-export const includeInactive = z.coerce
-  .boolean({
-    invalid_type_error: 'includeInactive must be boolean.',
-    required_error: 'includeInactive is required.',
-  })
-  .default(false);
+export const sortOrder = z
+  .enum(['asc', 'desc'], { message: 'sortOrder must be "asc" or "desc".' })
+  .default('asc');
 
 export const limit = z.coerce
   .number({

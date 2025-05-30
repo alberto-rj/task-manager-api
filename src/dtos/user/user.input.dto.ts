@@ -7,7 +7,6 @@ import {
   username,
   email,
   password,
-  isActive,
   avatar,
   bio,
   timezone,
@@ -82,7 +81,6 @@ export type UserChangesDTO = Partial<{
   avatar: string;
   bio: string;
   timezone: string;
-  lastLoginAt: Date;
 }>;
 
 export type UserIdentifiersDTO = {
