@@ -11,6 +11,11 @@ import {
   avatar,
   bio,
   timezone,
+  search,
+  orderBy,
+  sortOrder,
+  limit,
+  page,
 } from '@/dtos/user/user.base.dto';
 import { validate } from '@/utils/validate';
 
@@ -25,40 +30,47 @@ export const createUser = z.object({
 });
 
 export const updateUser = z.object({
-  params: z.object({ id }),
   body: z.object({
-    firstName,
-    lastName,
-    bio,
-    timezone,
-    avatar,
+    firstName: firstName.optional(),
+    lastName: lastName.optional(),
+    bio: bio.optional(),
+    timezone: timezone.optional(),
+    avatar: avatar.optional(),
   }),
 });
 
 export const updateEmail = z.object({
-  params: z.object({ id }),
   body: z.object({
     email,
   }),
 });
 
 export const updateUsername = z.object({
-  params: z.object({ id }),
   body: z.object({
     username,
   }),
 });
 
 export const updatePassword = z.object({
-  params: z.object({ id }),
   body: z.object({
     password,
   }),
 });
 
-export const activeUser = z.object({
-  params: z.object({ id }),
-  body: z.object({ isActive }),
+export const readUser = z.object({
+  params: z.object({
+    id,
+  }),
+});
+
+export const readUsers = z.object({
+  query: z.object({
+    search,
+    orderBy,
+    sortOrder,
+    page,
+    limit,
+  }),
 });
 
 export type UserChangesDTO = Partial<{
@@ -70,7 +82,6 @@ export type UserChangesDTO = Partial<{
   avatar: string;
   bio: string;
   timezone: string;
-  isActive: boolean;
   lastLoginAt: Date;
 }>;
 
@@ -89,7 +100,9 @@ export type UpdateEmailDTO = z.infer<typeof updateEmail>;
 
 export type UpdatePasswordDTO = z.infer<typeof updatePassword>;
 
-export type ActiveUserDTO = z.infer<typeof activeUser>;
+export type ReadUserDTO = z.infer<typeof readUser>;
+
+export type ReadUsersDTO = z.infer<typeof readUsers>;
 
 export type UserEntriesDTO = CreateUserDTO['body'];
 
@@ -97,22 +110,31 @@ export type CreateUserBodyDTO = CreateUserDTO['body'];
 
 export type UpdateUserBodyDTO = UpdateUserDTO['body'];
 
+export type ReadUsersQueryDTO = ReadUsersDTO['query'];
+
 export const toCreateUserDTO = (data: unknown): CreateUserDTO => {
   return validate<CreateUserDTO>(createUser, data);
+};
+
+export const toReadUserDTO = (data: unknown): ReadUserDTO => {
+  return validate<ReadUserDTO>(createUser, data);
+};
+
+export const toReadUsersDTO = (data: unknown): ReadUsersDTO => {
+  return validate<ReadUsersDTO>(createUser, data);
 };
 
 export const toUpdateUserDTO = (data: unknown): UpdateUserDTO => {
   return validate<UpdateUserDTO>(updateUser, data);
 };
 
-export const toUpdateUsernameDTO = (data: unknown): UpdateUserDTO => {
-  return validate<UpdateUserDTO>(updateUser, data);
+export const toUpdateUsernameDTO = (data: unknown): UpdateUsernameDTO => {
+  return validate<UpdateUsernameDTO>(updateUser, data);
+};
+export const toUpdateEmailDTO = (data: unknown): UpdateEmailDTO => {
+  return validate<UpdateEmailDTO>(updateUser, data);
 };
 
 export const toUpdatePasswordDTO = (data: unknown): UpdatePasswordDTO => {
   return validate<UpdatePasswordDTO>(updatePassword, data);
-};
-
-export const toActiveUserDTO = (data: unknown): ActiveUserDTO => {
-  return validate<ActiveUserDTO>(activeUser, data);
 };

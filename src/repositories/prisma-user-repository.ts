@@ -3,10 +3,12 @@ import {
   UserEntriesDTO,
   UserChangesDTO,
   UserIdentifiersDTO,
+  ReadUsersQueryDTO,
 } from '@/dtos/user/user.input.dto';
 import { User } from '@/models/user.model';
 import { PrismaClient } from '@/prisma';
 import { hashPassword } from '@/utils/password-security';
+import { UserResult } from '@/types/user';
 
 export class PrismaUserRepository implements IUserRepository {
   private prisma: PrismaClient;
@@ -15,8 +17,51 @@ export class PrismaUserRepository implements IUserRepository {
     this.prisma = prisma;
   }
 
-  async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  async findAllByQuery({
+    search,
+    orderBy: sort,
+    sortOrder: sortOrder,
+    limit,
+    page,
+  }: ReadUsersQueryDTO): Promise<UserResult> {
+    const total = await this.prisma.user.count();
+    const users = await this.prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            firstName: {
+              mode: 'insensitive',
+              contains: search,
+            },
+          },
+          {
+            lastName: {
+              mode: 'insensitive',
+              contains: search,
+            },
+          },
+          {
+            username: {
+              mode: 'insensitive',
+              contains: search,
+            },
+          },
+          {
+            email: {
+              mode: 'insensitive',
+              contains: search,
+            },
+          },
+        ],
+      },
+      orderBy: {
+        [sort]: [sortOrder],
+      },
+      take: limit,
+      skip: limit * page,
+    });
+
+    return { total, users };
   }
 
   async findById(id: string): Promise<User | null> {

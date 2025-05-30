@@ -139,3 +139,53 @@ export const timezone = z
       .escapeHTML()
       .build(),
   );
+
+export const search = z
+  .string()
+  .transform((value) =>
+    create(value)
+      .normalizeWhitespace()
+      .removeControlChars()
+      .escapeHTML()
+      .build(),
+  );
+
+export const orderBy = z
+  .enum([
+    'firstName',
+    'lastName',
+    'username',
+    'email',
+    'createdAt',
+    'updatedAt',
+    'timezone',
+  ])
+  .default('updatedAt');
+
+export const sortOrder = z.enum(['asc', 'desc']).default('asc');
+
+export const includeInactive = z.coerce
+  .boolean({
+    invalid_type_error: 'includeInactive must be boolean.',
+    required_error: 'includeInactive is required.',
+  })
+  .default(false);
+
+export const limit = z.coerce
+  .number({
+    invalid_type_error: 'limit must be a number.',
+    required_error: 'limit is required.',
+  })
+  .int({ message: 'limit must be an integer.' })
+  .min(0, { message: 'limit must at least 0.' })
+  .max(60, { message: 'limit cannot exceed 60.' })
+  .default(20);
+
+export const page = z.coerce
+  .number({
+    invalid_type_error: 'page must be a number.',
+    required_error: 'page is required.',
+  })
+  .int({ message: 'page must be an integer.' })
+  .min(1, { message: 'page must at least 1.' })
+  .default(20);

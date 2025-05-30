@@ -6,20 +6,23 @@ import {
   NotFoundError,
 } from '@/utils/app-error';
 import {
+  toUserQueryResponseDTO,
   toUserResponseDTO,
+  UserQueryResponseDTO,
   UserResponseDTO,
 } from '@/dtos/user/user.output.dto';
 import {
   CreateUserBodyDTO,
+  ReadUsersQueryDTO,
   UpdateUserBodyDTO,
 } from '@/dtos/user/user.input.dto';
 
 export class UserService implements IUserService {
   constructor(private repo: IUserRepository) {}
 
-  async getAll(): Promise<UserResponseDTO[]> {
-    const allUsers = await this.repo.findAll();
-    return allUsers.map(toUserResponseDTO);
+  async getAllByQuery(query: ReadUsersQueryDTO): Promise<UserQueryResponseDTO> {
+    const result = await this.repo.findAllByQuery(query);
+    return toUserQueryResponseDTO(result, query);
   }
 
   async getById(id: string): Promise<UserResponseDTO> {
@@ -82,14 +85,14 @@ export class UserService implements IUserService {
       if (existingEmail) {
         details.push({
           field: `email`,
-          message: `Email is already registered`,
+          message: `email is already registered.`,
         });
       }
 
       if (existingUsername) {
         details.push({
           field: `username`,
-          message: `Username is already registered`,
+          message: `username is already registered.`,
         });
       }
 
@@ -115,7 +118,7 @@ export class UserService implements IUserService {
       persistedUser.id !== userToUpdate.id
     ) {
       throw new ConflictError([
-        { field: `username`, message: `Username is already registered` },
+        { field: `username`, message: `username is already registered.` },
       ]);
     }
 
@@ -135,20 +138,11 @@ export class UserService implements IUserService {
       persistedUser.id !== userToUpdate.id
     ) {
       throw new ConflictError([
-        { field: `email`, message: `Email is already registered` },
+        { field: `email`, message: `email is already registered.` },
       ]);
     }
 
     const updatedUser = await this.repo.update(id, { email: newEmail });
-
-    return toUserResponseDTO(updatedUser);
-  }
-
-  async updateIsActive(
-    id: string,
-    newState: boolean,
-  ): Promise<UserResponseDTO> {
-    const updatedUser = await this.repo.update(id, { isActive: newState });
 
     return toUserResponseDTO(updatedUser);
   }
