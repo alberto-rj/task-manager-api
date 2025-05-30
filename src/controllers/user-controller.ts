@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
 import { IUserService } from '@/interfaces/services/i-user-service';
-import { IAuthRequest } from '@/dtos/auth/auth.input.dto';
+import { IAuthRequest } from '@/types/i-auth-request';
 
 export class UserController {
   constructor(private service: IUserService) {}
