@@ -4,6 +4,17 @@ import { z } from 'zod';
 import { create } from '@/types/sanitize-string-builder';
 import { firstName } from '../user/user.base.dto';
 
+export const search = z
+  .string({ invalid_type_error: 'search must be a string.' })
+  .transform((value) =>
+    create(value)
+      .normalizeWhitespace()
+      .removeControlChars()
+      .escapeHTML()
+      .build(),
+  )
+  .default('');
+
 export const sortOrder = z
   .enum(['asc', 'desc'], {
     invalid_type_error: 'sortOrder must be a string',

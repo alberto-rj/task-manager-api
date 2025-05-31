@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { limit, page, sortOrder } from '@/dtos/common/common.base.dto';
+import { limit, page, search, sortOrder } from '@/dtos/common/common.base.dto';
 import {
   id,
   name,
@@ -11,6 +11,8 @@ import {
   isPublic,
   isArchived,
   includeArchived,
+  includePrivate,
+  orderBy,
 } from '@/dtos/project/project.base.dto';
 import { validate } from '@/utils/validate';
 
@@ -69,7 +71,11 @@ export const projectRead = z.object({
 
 export const projectList = z.object({
   query: z.object({
+    includePrivate,
     includeArchived,
+    name: name.default(''),
+    search,
+    orderBy,
     sortOrder,
     limit,
     page,
@@ -89,33 +95,33 @@ export type ProjectList = z.infer<typeof projectList>;
 export type ProjectRead = z.infer<typeof projectRead>;
 
 export type ProjectCreateInput = ProjectCreate['body'] & {
-  authorId: string;
+  authUserId: string;
 };
 
 export type ProjectReadInput = ProjectRead['params'] & {
-  authorId: string;
+  authUserId: string;
 };
 
 export type ProjectListInput = ProjectList['query'] & {
-  authorId: string;
+  authUserId: string;
 };
 
 export type ProjectUpdateInput = ProjectUpdate['body'] & {
   id: string;
-  authorId: string;
+  authUserId: string;
 };
 
 export type ProjectUpdateIsArchivedInput = ProjectUpdateIsArchived['body'] & {
   id: string;
-  authorId: string;
+  authUserId: string;
 };
 
 export type ProjectDeleteInput = ProjectDelete['params'] & {
-  authorId: string;
+  authUserId: string;
 };
 
 export type ProjectEntries = ProjectCreate['body'] & {
-  authorId: string;
+  authUserId: string;
 };
 
 export type ProjectChanges = Partial<{
@@ -127,7 +133,7 @@ export type ProjectChanges = Partial<{
   isPublic: boolean;
   isArchived: boolean;
   archivedAt: Date | null;
-  authorId: string;
+  authUserId: string;
 }>;
 
 export const toProjectCreate = (data: unknown): ProjectCreate => {

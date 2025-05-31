@@ -22,9 +22,9 @@ export const newProjectController = (service: IProjectService) => {
     try {
       const { query } = toProjectList(req);
 
-      const authorId = (req.user as IAuthPayload).id;
+      const authUserId = (req.user as IAuthPayload).id;
       const { resources, ...meta } = await service.getAll({
-        authorId,
+        authUserId,
         ...query,
       });
 
@@ -42,8 +42,8 @@ export const newProjectController = (service: IProjectService) => {
         params: { id },
       } = toProjectRead(req);
 
-      const authorId = (req.user as IAuthPayload).id;
-      const dto = await service.getById({ id, authorId });
+      const authUserId = (req.user as IAuthPayload).id;
+      const dto = await service.getById({ id, authUserId });
 
       res.status(200).json(responseBody.updated<typeof dto>({ resource: dto }));
     } catch (error) {
@@ -59,8 +59,8 @@ export const newProjectController = (service: IProjectService) => {
     try {
       const { body } = toProjectCreate(req);
 
-      const authorId = (req.user as IAuthPayload).id;
-      const dto = await service.create({ ...body, authorId });
+      const authUserId = (req.user as IAuthPayload).id;
+      const dto = await service.create({ ...body, authUserId });
 
       res.status(201).json(responseBody.updated<typeof dto>({ resource: dto }));
     } catch (error) {
@@ -79,8 +79,8 @@ export const newProjectController = (service: IProjectService) => {
         body,
       } = toProjectUpdate(req);
 
-      const authorId = (req.user as IAuthPayload).id;
-      const output = await service.update({ ...body, id, authorId });
+      const authUserId = (req.user as IAuthPayload).id;
+      const output = await service.update({ ...body, id, authUserId });
 
       res
         .status(200)
@@ -100,8 +100,8 @@ export const newProjectController = (service: IProjectService) => {
         params: { id },
       } = toProjectDelete(req);
 
-      const authorId = (req.user as IAuthPayload).id;
-      await service.delete({ id, authorId });
+      const authUserId = (req.user as IAuthPayload).id;
+      await service.delete({ id, authUserId });
 
       res.status(204).send();
     } catch (error) {
@@ -120,10 +120,10 @@ export const newProjectController = (service: IProjectService) => {
         body: { isArchived },
       } = toProjectUpdateIsArchived(req);
 
-      const authorId = (req.user as IAuthPayload).id;
+      const authUserId = (req.user as IAuthPayload).id;
       const output = await service.updateIsArchived({
         id,
-        authorId,
+        authUserId,
         isArchived,
       });
 

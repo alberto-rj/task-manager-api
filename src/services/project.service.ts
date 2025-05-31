@@ -23,60 +23,60 @@ export class ProjectService implements IProjectService {
     private service: IUserService,
   ) {}
 
-  async getAll(input: ProjectListInput): Promise<ProjectPaginationOutput> {
-    const output = await this.projectRepo.findAll(input);
-    return toProjectPaginationOutput(output, input);
+  async create({
+    authUserId,
+    ...input
+  }: ProjectCreateInput): Promise<ProjectOutput> {
+    await this.service.getById(authUserId);
+
+    const createdProject = await this.projectRepo.create({
+      authUserId,
+      ...input,
+    });
+
+    return toProjectOutput(createdProject);
   }
 
-  async getById({ id, authorId }: ProjectReadInput): Promise<ProjectOutput> {
-    const persistedProject = await this.projectRepo.findById({ id, authorId });
+  async getById({ id, authUserId }: ProjectReadInput): Promise<ProjectOutput> {
+    const persistedProject = await this.projectRepo.findById(id);
 
     if (!persistedProject) {
       throw new NotFoundError(`Project not found.`);
     }
 
-    if (persistedProject.authorId !== authorId) {
+    if (persistedProject.authorId !== authUserId) {
       throw new ForbiddenError(`Project access denied.`);
     }
 
     return toProjectOutput(persistedProject);
   }
 
-  async create(input: ProjectCreateInput): Promise<ProjectOutput> {
-    await this.service.getById(input.authorId);
-
-    const createdProject = await this.projectRepo.create(input);
-
-    return toProjectOutput(createdProject);
+  async getAll(input: ProjectListInput): Promise<ProjectPaginationOutput> {
+    const output = await this.projectRepo.findAll(input);
+    return toProjectPaginationOutput(output, input);
   }
 
   async update({
     id,
-    authorId,
+    authUserId,
     ...changes
   }: ProjectUpdateInput): Promise<ProjectOutput> {
-    await this.getById({ id, authorId });
+    await this.getById({ id, authUserId });
 
     const updatedProject = await this.projectRepo.update(id, {
-      authorId,
+      authUserId,
       ...changes,
     });
 
     return toProjectOutput(updatedProject);
   }
 
-  async delete({ id, authorId }: ProjectDeleteInput): Promise<void> {
-    await this.getById({ id, authorId });
-
-    await this.projectRepo.delete({ id, authorId });
-  }
-
   async updateIsArchived({
     id,
-    authorId,
+    authUserId,
     isArchived,
   }: ProjectUpdateIsArchivedInput): Promise<ProjectOutput> {
-    await this.getById({ id, authorId });
+    await this.getById({ id, authUserId });
 
     const archivedAt = isArchived ? new Date() : null;
 
@@ -86,5 +86,11 @@ export class ProjectService implements IProjectService {
     });
 
     return toProjectOutput(updatedProject);
+  }
+
+  async delete({ id, authUserId }: ProjectDeleteInput): Promise<void> {
+    await this.getById({ id, authUserId });
+
+    await this.projectRepo.delete(id);
   }
 }

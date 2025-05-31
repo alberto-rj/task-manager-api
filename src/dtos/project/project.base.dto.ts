@@ -51,4 +51,21 @@ export const isArchived = defaultFalse('isArchived');
 
 export const authorId = uuid('authorId');
 
+export const orderBy = z
+  .enum(
+    [
+      'name',
+      'description',
+      'startDate',
+      'endDate',
+      'createdAt',
+      'updatedAt',
+      'archivedAt',
+    ],
+    { message: 'orderBy is invalid.' },
+  )
+  .default('createdAt');
+
 export const includeArchived = defaultFalse('includeArchived');
+
+export const includePrivate = defaultFalse('includePrivate');
