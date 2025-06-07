@@ -6,27 +6,31 @@ import {
   NotFoundError,
 } from '@/utils/app-error';
 import {
+  toUserQueryResponseDTO,
   toUserResponseDTO,
+  UserQueryResponseDTO,
   UserResponseDTO,
 } from '@/dtos/user/user.output.dto';
 import {
   CreateUserBodyDTO,
+  UserQueryDTO,
   UpdateUserBodyDTO,
 } from '@/dtos/user/user.input.dto';
+import { UserRole } from '@/models/user.model';
 
 export class UserService implements IUserService {
   constructor(private repo: IUserRepository) {}
 
-  async getAll(): Promise<UserResponseDTO[]> {
-    const allUsers = await this.repo.findAll();
-    return allUsers.map(toUserResponseDTO);
+  async getAllByQuery(query: UserQueryDTO): Promise<UserQueryResponseDTO> {
+    const result = await this.repo.findAllByQuery(query);
+    return toUserQueryResponseDTO(result, query);
   }
 
   async getById(id: string): Promise<UserResponseDTO> {
     const persistedUser = await this.repo.findById(id);
 
     if (!persistedUser) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('User not found.');
     }
 
     return toUserResponseDTO(persistedUser);
@@ -36,7 +40,7 @@ export class UserService implements IUserService {
     const persistedUser = await this.repo.findByEmail(email);
 
     if (!persistedUser) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('User not found.');
     }
 
     return toUserResponseDTO(persistedUser);
@@ -46,7 +50,7 @@ export class UserService implements IUserService {
     const persistedUser = await this.repo.findByUsername(username);
 
     if (!persistedUser) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('User not found.');
     }
 
     return toUserResponseDTO(persistedUser);
@@ -82,14 +86,14 @@ export class UserService implements IUserService {
       if (existingEmail) {
         details.push({
           field: `email`,
-          message: `Email is already registered`,
+          message: `email is already registered.`,
         });
       }
 
       if (existingUsername) {
         details.push({
           field: `username`,
-          message: `Username is already registered`,
+          message: `username is already registered.`,
         });
       }
 
@@ -115,7 +119,7 @@ export class UserService implements IUserService {
       persistedUser.id !== userToUpdate.id
     ) {
       throw new ConflictError([
-        { field: `username`, message: `Username is already registered` },
+        { field: `username`, message: `username is already registered.` },
       ]);
     }
 
@@ -135,7 +139,7 @@ export class UserService implements IUserService {
       persistedUser.id !== userToUpdate.id
     ) {
       throw new ConflictError([
-        { field: `email`, message: `Email is already registered` },
+        { field: `email`, message: `email is already registered.` },
       ]);
     }
 
@@ -144,25 +148,26 @@ export class UserService implements IUserService {
     return toUserResponseDTO(updatedUser);
   }
 
+  async updateRole(id: string, newRole: UserRole): Promise<UserResponseDTO> {
+    const updatedUser = await this.repo.update(id, { role: newRole });
+    return toUserResponseDTO(updatedUser);
+  }
+
   async updateIsActive(
     id: string,
-    newState: boolean,
+    isActive: boolean,
   ): Promise<UserResponseDTO> {
-    const updatedUser = await this.repo.update(id, { isActive: newState });
-
+    const updatedUser = await this.repo.update(id, { isActive });
     return toUserResponseDTO(updatedUser);
   }
 
   async update(id: string, data: UpdateUserBodyDTO): Promise<UserResponseDTO> {
-    await this.getById(id);
-
     const updatedUser = await this.repo.update(id, data);
 
     return toUserResponseDTO(updatedUser);
   }
 
   async delete(id: string): Promise<void> {
-    await this.getById(id);
     await this.repo.delete(id);
   }
 }

@@ -1,4 +1,6 @@
-import { User } from '@/models/user.model';
+import { User, UserRole } from '@/models/user.model';
+import { UserResult } from '@/types/user';
+import { UserQueryDTO } from '@/dtos/user/user.input.dto';
 
 export type UserResponseDTO = {
   id: string;
@@ -6,13 +8,23 @@ export type UserResponseDTO = {
   lastName: string;
   username: string;
   email: string;
-  isActive: boolean;
-  timezone: string | undefined;
-  avatar: string | undefined;
-  bio: string | undefined;
-  lastLoginAt: string | undefined;
   createdAt: string;
   updatedAt: string;
+  role: UserRole;
+} & Partial<{
+  timezone: string;
+  avatar: string;
+  bio: string;
+}>;
+
+export type UserQueryResponseDTO = {
+  users: UserResponseDTO[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
 };
 
 export function toUserResponseDTO(user: User): UserResponseDTO {
@@ -23,8 +35,24 @@ export function toUserResponseDTO(user: User): UserResponseDTO {
     avatar: user?.avatar || undefined,
     bio: user.bio || undefined,
     timezone: user.timezone || undefined,
-    lastLoginAt: user.lastLoginAt?.toISOString() || undefined,
     updatedAt: user.updatedAt.toISOString(),
     createdAt: user.createdAt.toISOString(),
+  };
+}
+
+export function toUserQueryResponseDTO(
+  { users, total }: UserResult,
+  { limit, page }: UserQueryDTO,
+): UserQueryResponseDTO {
+  const newUsers = users.map(toUserResponseDTO);
+
+  return {
+    users: newUsers,
+    total,
+    limit,
+    page,
+    pages: Math.ceil(total / limit),
+    hasPrev: page > 1,
+    hasNext: total > limit * (page - 1),
   };
 }

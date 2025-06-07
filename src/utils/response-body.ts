@@ -19,20 +19,18 @@ export function records<T>(payload: { resources: T }): {
 }
 
 export function paginated<T>(payload: {
-  resources: T[];
-  pagination: {
-    total: number;
-    page: number;
-    pages: number;
-    limit: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
+  resources: T;
+  total: number;
+  page: number;
+  pages: number;
+  limit: number;
+  hasNext: boolean;
+  hasPrev: boolean;
 }): {
   success: boolean;
   data: {
-    results: T[];
-    pagination: {
+    results: T;
+    meta: {
       total: number;
       page: number;
       pages: number;
@@ -42,9 +40,10 @@ export function paginated<T>(payload: {
     };
   };
 } {
+  const { resources: results, ...meta } = payload;
   return {
     success: true,
-    data: { ...payload, results: payload.resources },
+    data: { results, meta },
   };
 }
 

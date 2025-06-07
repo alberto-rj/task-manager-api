@@ -1,50 +1,49 @@
 import { NextFunction, Response } from 'express';
 
-import { IAuthRequest, IUserPayload } from '@/dtos/auth/auth.input.dto';
 import { IProjectService } from '@/interfaces/services/i-project-service';
 import responseBody from '@/utils/response-body';
 import {
-  toArchiveProjectRIO,
-  toCreateProjectRIO,
-  toDeleteProjectRIO,
-  toGetProjectRIO,
-  toGetProjectsRIO,
-  toUpdateProjectRIO,
-} from '@/dtos/project/project.input';
+  toProjectUpdateIsArchived,
+  toProjectCreate,
+  toProjectDelete,
+  toProjectRead,
+  toProjectList,
+  toProjectUpdate,
+} from '@/dtos/project/project.input.dto';
+import { IAuthRequest } from '@/types/i-auth-request';
+import { IAuthPayload } from '@/types/i-auth-payload';
 
 export const newProjectController = (service: IProjectService) => {
-  const getProjects = async (
+  const readAll = async (
     req: IAuthRequest,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const {
-        query: { includeArchived },
-      } = toGetProjectsRIO(req);
-      const authorId = (req.user as IUserPayload).id;
-      const dto = await service.getAll(authorId, { includeArchived });
+      const { query } = toProjectList(req);
+
+      const authUserId = (req.user as IAuthPayload).id;
+      const { resources, ...meta } = await service.getAll({
+        authUserId,
+        ...query,
+      });
 
       res
         .status(200)
-        .json(responseBody.records<typeof dto>({ resources: dto }));
+        .json(responseBody.records<typeof resources>({ resources, ...meta }));
     } catch (error) {
       next(error);
     }
   };
 
-  const getProject = async (
-    req: IAuthRequest,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  const read = async (req: IAuthRequest, res: Response, next: NextFunction) => {
     try {
       const {
-        params: { projectId },
-      } = toGetProjectRIO(req);
+        params: { id },
+      } = toProjectRead(req);
 
-      const authorId = (req.user as IUserPayload).id;
-      const dto = await service.getById(projectId, authorId);
+      const authUserId = (req.user as IAuthPayload).id;
+      const dto = await service.getById({ id, authUserId });
 
       res.status(200).json(responseBody.updated<typeof dto>({ resource: dto }));
     } catch (error) {
@@ -52,15 +51,16 @@ export const newProjectController = (service: IProjectService) => {
     }
   };
 
-  const createProject = async (
+  const create = async (
     req: IAuthRequest,
     res: Response,
     next: NextFunction,
   ) => {
     try {
-      const { body } = toCreateProjectRIO(req);
-      const authorId = (req.user as IUserPayload).id;
-      const dto = await service.create(authorId, body);
+      const { body } = toProjectCreate(req);
+
+      const authUserId = (req.user as IAuthPayload).id;
+      const dto = await service.create({ ...body, authUserId });
 
       res.status(201).json(responseBody.updated<typeof dto>({ resource: dto }));
     } catch (error) {
@@ -68,38 +68,40 @@ export const newProjectController = (service: IProjectService) => {
     }
   };
 
-  const updateProject = async (
+  const change = async (
     req: IAuthRequest,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const {
-        params: { projectId },
+        params: { id },
         body,
-      } = toUpdateProjectRIO(req);
+      } = toProjectUpdate(req);
 
-      const authorId = (req.user as IUserPayload).id;
-      const dto = await service.update(projectId, authorId, body);
+      const authUserId = (req.user as IAuthPayload).id;
+      const output = await service.update({ ...body, id, authUserId });
 
-      res.status(200).json(responseBody.updated<typeof dto>({ resource: dto }));
+      res
+        .status(200)
+        .json(responseBody.updated<typeof output>({ resource: output }));
     } catch (error) {
       next(error);
     }
   };
 
-  const deleteProject = async (
+  const remove = async (
     req: IAuthRequest,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const {
-        params: { projectId },
-      } = toDeleteProjectRIO(req);
+        params: { id },
+      } = toProjectDelete(req);
 
-      const authorId = (req.user as IUserPayload).id;
-      await service.delete(projectId, authorId);
+      const authUserId = (req.user as IAuthPayload).id;
+      await service.delete({ id, authUserId });
 
       res.status(204).send();
     } catch (error) {
@@ -107,32 +109,38 @@ export const newProjectController = (service: IProjectService) => {
     }
   };
 
-  const archiveProject = async (
+  const changeIsArchived = async (
     req: IAuthRequest,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const {
-        params: { projectId },
-        body,
-      } = toArchiveProjectRIO(req);
+        params: { id },
+        body: { isArchived },
+      } = toProjectUpdateIsArchived(req);
 
-      const authorId = (req.user as IUserPayload).id;
-      const dto = await service.archive(projectId, authorId, body);
+      const authUserId = (req.user as IAuthPayload).id;
+      const output = await service.updateIsArchived({
+        id,
+        authUserId,
+        isArchived,
+      });
 
-      res.status(200).json(responseBody.updated<typeof dto>({ resource: dto }));
+      res
+        .status(200)
+        .json(responseBody.updated<typeof output>({ resource: output }));
     } catch (error) {
       next(error);
     }
   };
 
   return {
-    archiveProject,
-    createProject,
-    deleteProject,
-    getProject,
-    getProjects,
-    updateProject,
+    create,
+    read,
+    readAll,
+    remove,
+    change,
+    changeIsArchived,
   };
 };

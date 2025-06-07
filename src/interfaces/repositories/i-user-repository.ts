@@ -2,11 +2,13 @@ import {
   UserEntriesDTO,
   UserChangesDTO,
   UserIdentifiersDTO,
+  UserQueryDTO,
 } from '@/dtos/user/user.input.dto';
 import { User } from '@/models/user.model';
+import { UserResult } from '@/types/user';
 
 export interface IUserRepository {
-  findAll(): Promise<User[]>;
+  findAllByQuery(query: UserQueryDTO): Promise<UserResult>;
 
   findAllWithSomeIdentifier(data: UserIdentifiersDTO): Promise<User[]>;
 

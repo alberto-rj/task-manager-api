@@ -1,13 +1,21 @@
-import validator from 'validator';
 import { z } from 'zod';
 
-import { uuid } from '@/dtos/common/base.dto';
+import {
+  defaultFalse,
+  imageURL,
+  isoFutureDate,
+  uuid,
+} from '@/dtos/common/common.base.dto';
+import { ProjectPriority, ProjectStatus } from '@/models/project.model';
 import { create } from '@/types/sanitize-string-builder';
 
 export const id = uuid('id');
 
 export const name = z
-  .string({ required_error: 'name is required.' })
+  .string({
+    invalid_type_error: 'name must be string.',
+    required_error: 'name is required.',
+  })
   .min(1, { message: 'name cannot be empty.' })
   .max(100, { message: 'name cannot exceed 100 characters.' })
   .transform((value) =>
@@ -19,7 +27,10 @@ export const name = z
   );
 
 export const description = z
-  .string({ required_error: 'description is required.' })
+  .string({
+    invalid_type_error: 'description must be string.',
+    required_error: 'description is required.',
+  })
   .max(500, { message: 'description must have until 500 characters.' })
   .transform((value) =>
     create(value)
@@ -29,74 +40,52 @@ export const description = z
       .build(),
   );
 
-export const coverImage = z
-  .string({ required_error: 'coverImage is required.' })
-  .refine((value) => validator.isURL(value), {
-    message:
-      'coverImage must be a valid URL (e.g., "https://example.com/cover-image.png").',
-  })
-  .transform((value) =>
-    create(value)
-      .normalizeWhitespace()
-      .removeControlChars()
-      .escapeHTML()
-      .build(),
-  );
+export const status = z
+  .enum(
+    [ProjectStatus.ACTIVE, ProjectStatus.ARCHIVED, ProjectStatus.COMPLETED],
+    { message: 'status must be valid.' },
+  )
+  .default(ProjectStatus.ACTIVE);
 
-export const startDate = z
-  .string({ required_error: 'startDate is required.' })
-  .refine((value) => validator.isISO8601(value, { strict: true }), {
-    message:
-      'endDate must be a valid ISO 8601 date (e.g., "2025-05-25T00:00:00Z").',
-  })
-  .refine((value) => validator.isAfter(value), {
-    message: 'startDate must be in the future.',
-  })
-  .transform((value) => new Date(value));
+export const priority = z
+  .enum(
+    [
+      ProjectPriority.LOW,
+      ProjectPriority.MEDIUM,
+      ProjectPriority.HIGH,
+      ProjectPriority.URGENT,
+    ],
+    { message: 'priority must be valid.' },
+  )
+  .default(ProjectPriority.MEDIUM);
 
-export const endDate = z
-  .string({ required_error: 'endDate is required.' })
-  .refine((value) => validator.isISO8601(value, { strict: true }), {
-    message:
-      'endDate must be a valid ISO 8601 date (e.g., "2025-05-25T00:00:00Z").',
-  })
-  .refine((value) => validator.isAfter(value), {
-    message: 'endDate must be in the future.',
-  })
-  .transform((value) => new Date(value));
+export const coverImage = imageURL('coverImage', 'cover-image');
 
-export const duration = z
-  .object({
-    startDate,
-    endDate,
-  })
-  .refine(({ startDate, endDate }) => endDate >= startDate, {
-    message: 'endDate must be greater than or equal to startDate.',
-    path: ['endDate'],
-  });
+export const startDate = isoFutureDate('startDate');
 
-export const isPublic = z
-  .string()
-  .default('false')
-  .refine((value) => value === 'true' || value === 'false', {
-    message: 'isPublic must be "true" or "false".',
-  })
-  .transform((value) => value === 'true');
+export const endDate = isoFutureDate('endDate');
 
-export const isArchived = z
-  .string()
-  .default('false')
-  .refine((value) => value === 'true' || value === 'false', {
-    message: 'isArchived must be "true" or "false".',
-  })
-  .transform((value) => value === 'true');
+export const isPublic = defaultFalse('isPublic');
+
+export const isArchived = defaultFalse('isArchived');
 
 export const authorId = uuid('authorId');
 
-export const includeArchived = z
-  .string({ required_error: 'includeArchived is required.' })
-  .default('false')
-  .refine((value) => value === 'true' || value === 'false', {
-    message: 'includeArchived must be "true" or "false".',
-  })
-  .transform((arg) => arg === 'true');
+export const orderBy = z
+  .enum(
+    [
+      'name',
+      'description',
+      'startDate',
+      'endDate',
+      'createdAt',
+      'updatedAt',
+      'archivedAt',
+    ],
+    { message: 'orderBy is invalid.' },
+  )
+  .default('createdAt');
+
+export const includeArchived = defaultFalse('includeArchived');
+
+export const includePrivate = defaultFalse('includePrivate');

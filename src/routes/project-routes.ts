@@ -19,40 +19,28 @@ const projectController = newProjectController(
 
 const projectRoutes = Router();
 
-projectRoutes.get(
-  '/',
-  authMiddleware.authenticate,
-  projectController.getProjects,
-);
+projectRoutes.get('/', authMiddleware.authenticate, projectController.readAll);
 
-projectRoutes.post(
-  '/',
-  authMiddleware.authenticate,
-  projectController.createProject,
-);
+projectRoutes.post('/', authMiddleware.authenticate, projectController.create);
 
-projectRoutes.get(
-  '/:projectId',
+projectRoutes.get('/:id', authMiddleware.authenticate, projectController.read);
+
+projectRoutes.patch(
+  '/:id',
   authMiddleware.authenticate,
-  projectController.getProject,
+  projectController.change,
 );
 
 projectRoutes.patch(
-  '/:projectId',
+  '/:id/archive',
   authMiddleware.authenticate,
-  projectController.updateProject,
-);
-
-projectRoutes.patch(
-  '/:projectId/archive',
-  authMiddleware.authenticate,
-  projectController.archiveProject,
+  projectController.changeIsArchived,
 );
 
 projectRoutes.delete(
-  '/:projectId',
+  '/:id',
   authMiddleware.authenticate,
-  projectController.deleteProject,
+  projectController.remove,
 );
 
 export { projectRoutes };

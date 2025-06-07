@@ -1,12 +1,12 @@
 import { Router } from 'express';
 
-import { newAuthController } from '../controllers/auth-controller';
+import { newAuthController } from '@/controllers/auth-controller';
 import {
   newIRefreshTokenRepository,
   newIUserRepository,
-} from '../utils/repository-factory';
-import { newIAuthService, newIUserService } from '../utils/service-factory';
-import { newAuthMiddleware } from '../middlewares/auth-middleware';
+} from '@/utils/repository-factory';
+import { newIAuthService, newIUserService } from '@/utils/service-factory';
+import { newAuthMiddleware } from '@/middlewares/auth-middleware';
 
 const authMiddleware = newAuthMiddleware();
 
@@ -20,9 +20,9 @@ const authController = newAuthController(
 
 const authRoutes = Router();
 
-authRoutes.post('/signup', authController.signup);
+authRoutes.post('/register', authController.register);
 
-authRoutes.post('/signin', authController.signin);
+authRoutes.post('/login', authController.login);
 
 authRoutes.post(
   '/refresh-token',

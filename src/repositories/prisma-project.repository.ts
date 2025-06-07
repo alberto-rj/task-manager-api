@@ -2,10 +2,11 @@ import { PrismaClient } from '@/prisma';
 import { Project } from '@/models/project.model';
 import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
 import {
-  ProjectChangesDTO,
-  ProjectEntriesDTO,
-  ProjectQueryDTO,
-} from '@/dtos/project/project.input';
+  ProjectChanges,
+  ProjectEntries,
+  ProjectListInput,
+} from '@/dtos/project/project.input.dto';
+import { ProjectListOutput } from '@/dtos/project/project.output.dto';
 
 export class PrismaProjectRepository implements IProjectRepository {
   private prisma: PrismaClient;
@@ -14,17 +15,82 @@ export class PrismaProjectRepository implements IProjectRepository {
     this.prisma = prisma;
   }
 
-  async findAllWithQuery(query: ProjectQueryDTO): Promise<Project[]> {
-    const persistedProjects = await this.prisma.project.findMany({ take: 20 });
-    return persistedProjects;
-  }
+  async findAll({
+    name,
+    status,
+    priority,
+    startDateMin,
+    startDateMax,
+    endDateMin,
+    endDateMax,
+    createdAtMin,
+    createdAtMax,
+    updatedAtMin,
+    updatedAtMax,
+    search,
+    authUserId,
+    includePrivate,
+    orderBy: sort,
+    sortOrder,
+    limit,
+    page,
+  }: ProjectListInput): Promise<ProjectListOutput> {
+    const take = limit;
+    const skip = limit * page;
+    const isPublic = includePrivate ? undefined : true;
+    const authorId = authUserId;
 
-  async findAllByIsArchived(isArchived: boolean): Promise<Project[]> {
-    const persistedProjects = await this.prisma.project.findMany({
-      where: { isArchived },
-    });
+    const [total, persistedProjects] = await Promise.all([
+      this.prisma.project.count({
+        where: { isPublic, authorId },
+      }),
+      this.prisma.project.findMany({
+        where: {
+          name,
+          status,
+          priority,
+          isPublic,
+          authorId,
+          startDate: {
+            gte: startDateMin,
+            lte: startDateMax,
+          },
+          endDate: {
+            gte: endDateMin,
+            lte: endDateMax,
+          },
+          createdAt: {
+            gte: createdAtMin,
+            lte: createdAtMax,
+          },
+          updatedAt: {
+            gte: updatedAtMin,
+            lte: updatedAtMax,
+          },
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              description: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+        take,
+        skip,
+        orderBy: {
+          [sort]: sortOrder,
+        },
+      }),
+    ]);
 
-    return persistedProjects;
+    return { total, resources: persistedProjects };
   }
 
   async findById(id: string): Promise<Project | null> {
@@ -35,13 +101,13 @@ export class PrismaProjectRepository implements IProjectRepository {
     return persistedProject;
   }
 
-  async create(data: ProjectEntriesDTO): Promise<Project> {
+  async create({ authUserId, ...data }: ProjectEntries): Promise<Project> {
     return this.prisma.project.create({
-      data,
+      data: { ...data, authorId: authUserId },
     });
   }
 
-  async update(id: string, data: ProjectChangesDTO): Promise<Project> {
+  async update(id: string, data: ProjectChanges): Promise<Project> {
     const updatedProject = await this.prisma.project.update({
       data,
       where: { id },

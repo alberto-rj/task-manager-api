@@ -1,9 +1,12 @@
 import { NextFunction, Response } from 'express';
-import { IAuthRequest } from '@/dtos/auth/auth.input.dto';
+
+import { UserRole } from '@/models/user.model';
+import { IUserService } from '@/interfaces/services/i-user-service';
+import { IAuthRequest } from '@/types/i-auth-request';
 import { ForbiddenError, UnauthorizedError } from '@/utils/app-error';
 import { verifyToken } from '@/utils/jwt';
 
-export const newAuthMiddleware = () => {
+export const newAuthMiddleware = (userService: IUserService) => {
   const authenticate = async (
     req: IAuthRequest,
     res: Response,
@@ -24,6 +27,8 @@ export const newAuthMiddleware = () => {
         throw new UnauthorizedError('Invalid or expired access token');
       }
 
+      await userService.getById(decoded.id);
+
       req.user = decoded;
 
       next();
@@ -32,11 +37,11 @@ export const newAuthMiddleware = () => {
     }
   };
 
-  const authorize = (roles: string[] = []) => {
+  const authorize = (roles: UserRole[] = []) => {
     return (req: IAuthRequest, res: Response, next: NextFunction) => {
       try {
         if (!req.user) {
-          throw new UnauthorizedError('Not authenticated');
+          throw new UnauthorizedError('Not authenticated.');
         }
 
         if (roles.length === 0) {
@@ -44,12 +49,12 @@ export const newAuthMiddleware = () => {
           return;
         }
 
-        // if (req.user.role && roles.includes(req.user.role)) {
-        //   next();
-        //   return;
-        // }
+        if (req.user.role && roles.includes(req.user.role)) {
+          next();
+          return;
+        }
 
-        throw new ForbiddenError('Insufficient permissions');
+        throw new ForbiddenError('Insufficient permissions.');
       } catch (error) {
         next(error);
       }

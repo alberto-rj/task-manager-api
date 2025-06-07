@@ -1,11 +1,16 @@
 import {
-  CreateProjectBodyDTO,
-  ProjectQueryDTO,
-  UpdateProjectBodyDTO,
-} from '@/dtos/project/project.input';
+  ProjectCreateInput,
+  ProjectReadInput,
+  ProjectListInput,
+  ProjectUpdateInput,
+  ProjectDeleteInput,
+  ProjectUpdateIsArchivedInput,
+} from '@/dtos/project/project.input.dto';
 import {
-  ProjectResponseDTO,
-  toProjectResponseDTO,
+  ProjectOutput,
+  ProjectPaginationOutput,
+  toProjectOutput,
+  toProjectPaginationOutput,
 } from '@/dtos/project/project.output.dto';
 import { IProjectRepository } from '@/interfaces/repositories/i-project-repository';
 import { IProjectService } from '@/interfaces/services/i-project-service';
@@ -18,76 +23,74 @@ export class ProjectService implements IProjectService {
     private service: IUserService,
   ) {}
 
-  async getAll(
-    authorId: string,
-    dto: ProjectQueryDTO,
-  ): Promise<ProjectResponseDTO[]> {
-    const persistedProjects = await this.projectRepo.findAllWithQuery({
-      authorId,
-      includeArchived: dto.includeArchived || false,
+  async create({
+    authUserId,
+    ...input
+  }: ProjectCreateInput): Promise<ProjectOutput> {
+    await this.service.getById(authUserId);
+
+    const createdProject = await this.projectRepo.create({
+      authUserId,
+      ...input,
     });
 
-    return persistedProjects.map(toProjectResponseDTO);
+    return toProjectOutput(createdProject);
   }
 
-  async getById(id: string, authorId: string): Promise<ProjectResponseDTO> {
+  async getById({ id, authUserId }: ProjectReadInput): Promise<ProjectOutput> {
     const persistedProject = await this.projectRepo.findById(id);
 
     if (!persistedProject) {
-      throw new NotFoundError(`Project not found`);
+      throw new NotFoundError(`Project not found.`);
     }
 
-    if (persistedProject.authorId !== authorId) {
-      throw new ForbiddenError(`Project access denied`);
+    if (persistedProject.authorId !== authUserId) {
+      throw new ForbiddenError(`Project access denied.`);
     }
 
-    return toProjectResponseDTO(persistedProject);
+    return toProjectOutput(persistedProject);
   }
 
-  async create(
-    authorId: string,
-    dto: CreateProjectBodyDTO,
-  ): Promise<ProjectResponseDTO> {
-    await this.service.getById(authorId);
-
-    const createdProject = await this.projectRepo.create({
-      ...dto,
-      authorId,
-    });
-
-    return toProjectResponseDTO(createdProject);
+  async getAll(input: ProjectListInput): Promise<ProjectPaginationOutput> {
+    const output = await this.projectRepo.findAll(input);
+    return toProjectPaginationOutput(output, input);
   }
 
-  async update(
-    id: string,
-    authorId: string,
-    dto: UpdateProjectBodyDTO,
-  ): Promise<ProjectResponseDTO> {
-    await this.getById(id, authorId);
+  async update({
+    id,
+    authUserId,
+    ...changes
+  }: ProjectUpdateInput): Promise<ProjectOutput> {
+    await this.getById({ id, authUserId });
 
     const updatedProject = await this.projectRepo.update(id, {
-      ...dto,
-      authorId,
+      authUserId,
+      ...changes,
     });
 
-    return toProjectResponseDTO(updatedProject);
+    return toProjectOutput(updatedProject);
   }
 
-  async delete(authorId: string, id: string): Promise<void> {
-    await this.getById(id, authorId);
+  async updateIsArchived({
+    id,
+    authUserId,
+    isArchived,
+  }: ProjectUpdateIsArchivedInput): Promise<ProjectOutput> {
+    await this.getById({ id, authUserId });
+
+    const archivedAt = isArchived ? new Date() : null;
+
+    const updatedProject = await this.projectRepo.update(id, {
+      isArchived,
+      archivedAt,
+    });
+
+    return toProjectOutput(updatedProject);
+  }
+
+  async delete({ id, authUserId }: ProjectDeleteInput): Promise<void> {
+    await this.getById({ id, authUserId });
 
     await this.projectRepo.delete(id);
-  }
-
-  async archive(
-    id: string,
-    authorId: string,
-    isArchived: boolean,
-  ): Promise<ProjectResponseDTO> {
-    await this.getById(id, authorId);
-
-    const updatedProject = await this.projectRepo.update(id, { isArchived });
-
-    return toProjectResponseDTO(updatedProject);
   }
 }

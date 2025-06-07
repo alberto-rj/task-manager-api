@@ -1,11 +1,16 @@
 import {
   CreateUserBodyDTO,
+  UserQueryDTO,
   UpdateUserBodyDTO,
 } from '@/dtos/user/user.input.dto';
-import { UserResponseDTO } from '@/dtos/user/user.output.dto';
+import {
+  UserQueryResponseDTO,
+  UserResponseDTO,
+} from '@/dtos/user/user.output.dto';
+import { UserRole } from '@/models/user.model';
 
 export interface IUserService {
-  getAll(): Promise<UserResponseDTO[]>;
+  getAllByQuery(query: UserQueryDTO): Promise<UserQueryResponseDTO>;
 
   getById(id: string): Promise<UserResponseDTO>;
 
@@ -22,6 +27,10 @@ export interface IUserService {
   updateUsername(id: string, newUsername: string): Promise<UserResponseDTO>;
 
   updateEmail(id: string, newEmail: string): Promise<UserResponseDTO>;
+
+  updateIsActive(id: string, newState: boolean): Promise<UserResponseDTO>;
+
+  updateRole(id: string, newRole: UserRole): Promise<UserResponseDTO>;
 
   delete(id: string): Promise<void>;
 }

@@ -1,4 +1,13 @@
 -- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
+
+-- CreateEnum
+CREATE TYPE "ProjectStatus" AS ENUM ('ACTIVE', 'COMPLETED', 'ARCHIVED');
+
+-- CreateEnum
+CREATE TYPE "ProjectPriority" AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'URGENT');
+
+-- CreateEnum
 CREATE TYPE "ProjectMemberRole" AS ENUM ('AUTHOR', 'ADMIN', 'CONTRIBUTOR', 'VIEWER');
 
 -- CreateEnum
@@ -18,11 +27,11 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
     "timezone" TEXT,
     "bio" TEXT,
     "avatar" TEXT,
-    "lastLoginAt" TIMESTAMP(3),
+    "role" "UserRole" NOT NULL DEFAULT 'USER',
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -38,8 +47,11 @@ CREATE TABLE "Project" (
     "startDate" TIMESTAMP(3),
     "endDate" TIMESTAMP(3),
     "isPublic" BOOLEAN NOT NULL DEFAULT false,
-    "isArchived" BOOLEAN NOT NULL DEFAULT false,
+    "status" "ProjectStatus" NOT NULL DEFAULT 'ACTIVE',
+    "priority" "ProjectPriority" NOT NULL DEFAULT 'MEDIUM',
     "authorId" TEXT NOT NULL,
+    "completedAt" TIMESTAMP(3),
+    "archivedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -72,6 +84,7 @@ CREATE TABLE "Task" (
     "dueDate" TIMESTAMP(3),
     "completedAt" TIMESTAMP(3),
     "isArchived" BOOLEAN NOT NULL DEFAULT false,
+    "archivedAt" TIMESTAMP(3),
     "authorId" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
     "assignedToId" TEXT,
@@ -99,6 +112,12 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ProjectMember_projectId_key" ON "ProjectMember"("projectId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ProjectMember_memberId_key" ON "ProjectMember"("memberId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RefreshToken_token_key" ON "RefreshToken"("token");

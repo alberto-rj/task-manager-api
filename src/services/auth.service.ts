@@ -65,7 +65,8 @@ export class AuthService implements IAuthService {
       throw new NotFoundError('User not found');
     }
 
-    const accessToken = generateAccessToken({ id: user.id });
+    const { id, role } = user;
+    const accessToken = generateAccessToken({ id, role });
 
     await this.refreshTokenRepo.deleteByToken(token);
     const newRefreshToken = await this.createNewRefreshToken(user.id);
@@ -80,9 +81,13 @@ export class AuthService implements IAuthService {
   async login(data: LoginBodyDTO): Promise<AuthResponseDTO> {
     const persistedUser = await this.userRepo.findByIdentifier(data.identifier);
 
-    const error = new NotFoundError('Identifier or password do not match');
+    const error = new NotFoundError('Identifier or password do not match.');
 
     if (!persistedUser) {
+      throw error;
+    }
+
+    if (!persistedUser.isActive) {
       throw error;
     }
 
@@ -97,9 +102,8 @@ export class AuthService implements IAuthService {
 
     const refreshToken = await this.createNewRefreshToken(persistedUser.id);
 
-    await this.userRepo.update(persistedUser.id, { lastLoginAt: new Date() });
-
-    const accessToken = generateAccessToken({ id: persistedUser.id });
+    const { id, role } = persistedUser;
+    const accessToken = generateAccessToken({ id, role });
 
     return {
       user: toUserResponseDTO(persistedUser),
@@ -111,7 +115,8 @@ export class AuthService implements IAuthService {
   async register(data: CreateUserBodyDTO): Promise<AuthResponseDTO> {
     const createdUser = await this.userService.create(data);
 
-    const accessToken = generateAccessToken({ id: createdUser.id });
+    const { id, role } = createdUser;
+    const accessToken = generateAccessToken({ id, role });
     const refreshToken = await this.createNewRefreshToken(createdUser.id);
 
     return {
